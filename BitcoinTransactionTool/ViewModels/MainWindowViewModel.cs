@@ -116,7 +116,7 @@ namespace BitcoinTransactionTool.ViewModels
         {
             get
             {
-                return UtxoList.Sum(x => x.AmountBitcoin);
+                return SelectedUTXOs.Sum(x => x.AmountBitcoin);
             }
         }
 
