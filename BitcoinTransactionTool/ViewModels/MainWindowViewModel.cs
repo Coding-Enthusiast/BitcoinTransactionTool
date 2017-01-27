@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
+using System.Windows;
 
-using CommonLibrary;
 using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
+using CommonLibrary;
 
 namespace BitcoinTransactionTool.ViewModels
 {
@@ -30,6 +31,7 @@ namespace BitcoinTransactionTool.ViewModels
             MakeTxCommand = new BindableCommand(MakeTx, CanMakeTx);
             ShowQrWindowCommand = new RelayCommand(ShowQrWindow, CanShowQr);
             ShowEditWindowCommand = new RelayCommand(ShowEditWindow);
+            CopyTxCommand = new RelayCommand(CopyTx, CanCopyTx);
 
             // These moved below to avoid throwing null exception.
             ReceiveList.ListChanged += ReceiveList_ListChanged;
@@ -37,6 +39,9 @@ namespace BitcoinTransactionTool.ViewModels
             SelectionChangedCommand = new BindableCommand(SelectionChanged);
             SelectedWalletType = Transaction.WalletType.Normal;
         }
+
+
+        #region Properties
 
         /// <summary>
         /// List of Api services used for receiving Unconfirmed Transaction Outputs (UTXO)
@@ -98,6 +103,17 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
+
+        public int TransactionSize
+        {
+            get
+            {
+                int size = Transaction.GetTransactionSize(SelectedUTXOs.Count, ReceiveList.Count);
+                return size;
+            }
+        }
+
+
         /// <summary>
         /// Sum of Sending Addresses balances which shows the total available amount to spend.
         /// </summary>
@@ -144,6 +160,20 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
+        public string FeePerByte
+        {
+            get 
+            {
+                int size = 0;
+                if (TransactionSize!= 0)
+                {
+                    size = (int)(Fee / BitcoinConversions.Satoshi) / TransactionSize;
+                }
+                return string.Format("{0} satoshi/byte", size);
+            }
+        }
+
+
         /// <summary>
         /// List of selected UTXOs, these are the ones that will be spent.
         /// </summary>
@@ -159,7 +189,9 @@ namespace BitcoinTransactionTool.ViewModels
                     RaisePropertyChanged("SelectedUTXOs");
                     RaisePropertyChanged("TotalSelectedBalance");
                     RaisePropertyChanged("Fee");
-                    CanMakeTx();
+                    RaisePropertyChanged("FeePerByte");
+                    RaisePropertyChanged("TransactionSize");
+
                     // Raise button canExecute event
                     MakeTxCommand.RaiseCanExecuteChanged();
                 }
@@ -175,7 +207,9 @@ namespace BitcoinTransactionTool.ViewModels
         void ReceiveList_ListChanged(object sender, ListChangedEventArgs e)
         {
             RaisePropertyChanged("Fee");
+            RaisePropertyChanged("FeePerByte");
             RaisePropertyChanged("TotalToSend");
+            RaisePropertyChanged("TransactionSize");
 
             // Check
             MakeTxCommand.RaiseCanExecuteChanged();
@@ -216,10 +250,12 @@ namespace BitcoinTransactionTool.ViewModels
                     RaisePropertyChanged("RawTx");
                     ShowEditWindowCommand.RaiseCanExecuteChanged();
                     ShowQrWindowCommand.RaiseCanExecuteChanged();
+                    CopyTxCommand.RaiseCanExecuteChanged();
                 }
             }
         }
 
+        #endregion
 
 
         #region commands
@@ -301,6 +337,27 @@ namespace BitcoinTransactionTool.ViewModels
             winManager.Show(vm);
         }
         private bool CanShowQr()
+        {
+            if (string.IsNullOrEmpty(RawTx))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+        /// <summary>
+        /// Copies the created RawTx to clipboard.
+        /// </summary>
+        public RelayCommand CopyTxCommand { get; private set; }
+        private void CopyTx()
+        {
+            Clipboard.SetText(RawTx);
+        }
+        private bool CanCopyTx()
         {
             if (string.IsNullOrEmpty(RawTx))
             {

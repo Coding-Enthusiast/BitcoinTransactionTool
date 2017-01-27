@@ -87,7 +87,7 @@ namespace BitcoinTransactionTool.Services
         /// <param name="receiveAddr">List of receiving addresses and the amount to be paid to each.</param>
         /// <param name="wallet">Type of the wallet (Electrum does not recognize normal type of scriptSig placeholder).</param>
         /// <returns>Rat unsigned transaction string.</returns>
-        public static string CreateRawTx(List<UTXO> txToSpend, List<ReceivingAddress> receiveAddr,UInt32 lockTime, WalletType wallet)
+        public static string CreateRawTx(List<UTXO> txToSpend, List<ReceivingAddress> receiveAddr, UInt32 lockTime, WalletType wallet)
         {
             StringBuilder rawTx = new StringBuilder();
 
@@ -224,8 +224,8 @@ namespace BitcoinTransactionTool.Services
             btx.IsRbf = isRbf;
 
             //8) ? byte - tx_out count (compactSize uint)
-            btx.TxOutCount = NumberConversions.ReadCompactSize(tx,ref index);
-            
+            btx.TxOutCount = NumberConversions.ReadCompactSize(tx, ref index);
+
             // Initialize the array
             btx.TxOutList = new TxOut[btx.TxOutCount];
             for (UInt64 i = 0; i < btx.TxOutCount; i++)
@@ -261,6 +261,40 @@ namespace BitcoinTransactionTool.Services
             }
 
             return btx;
+        }
+
+
+        /// <summary>
+        /// Returns estimated value for the final signed transaction.
+        /// </summary>
+        /// <param name="inputCount">Number of inputs to spend</param>
+        /// <param name="outputCount">Number of outputs to receive</param>
+        /// <returns>Transaction size</returns>
+        public static int GetTransactionSize(int inputCount, int outputCount)
+        {
+            int c1 = NumberConversions.MakeCompactSize((UInt64)inputCount).Length / 2;
+            int c2 = NumberConversions.MakeCompactSize((UInt64)outputCount).Length / 2;
+
+            int inputSize =
+                32 //TX hash
+                + 4 //output Index
+                + 1 //scriptSig length
+                + 138 //scriptSig sig
+                + 4; //sequence
+            int outputSize =
+                8 //Amount
+                + 1 //pk_script length
+                + 25; //pk_script
+
+            int totalSize =
+                4 //Version
+                + c1 //TxIn Count
+                + inputSize * inputCount
+                + c2 //TxOut Count
+                + outputSize * outputCount
+                + 4; //LockTime
+
+            return totalSize;
         }
     }
 }

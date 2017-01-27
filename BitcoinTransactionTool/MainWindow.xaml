@@ -4,7 +4,7 @@
         xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
         
-        Title="Bitcoin Transaction Tool - Version Beta" Height="564" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Bitcoin Transaction Tool - Version Beta" Height="614" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -45,7 +45,7 @@
         <TextBox Text="1" HorizontalAlignment="Left" Height="26" Margin="537,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" ToolTip="The current consensus rule is version 1." IsReadOnly="True"/>
         <Label Content="LockTime:" HorizontalAlignment="Left" Margin="449,110,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
         <TextBox Text="{Binding LockTime, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="26" Margin="537,112,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105"/>
-        
+
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="190" Margin="10,149,0,0" VerticalAlignment="Top" Width="632" ItemsSource="{Binding Source={StaticResource AddressViewSource}}" SelectionMode="Multiple">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
@@ -90,27 +90,32 @@
             </ListView.GroupStyle>
         </ListView>
 
-        <DataGrid HorizontalAlignment="Left" Margin="10,344,0,0" VerticalAlignment="Top" Height="98" Width="444" ItemsSource="{Binding ReceiveList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible">
+        <DataGrid HorizontalAlignment="Left" Margin="10,344,0,0" VerticalAlignment="Top" Height="137" Width="444" ItemsSource="{Binding ReceiveList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Receiving Address" Width="310" Binding="{Binding Address, Mode=TwoWay}"/>
                 <DataGridTextColumn Header="Payment" Width="90" Binding="{Binding Payment, Mode=TwoWay, StringFormat=\{0:F8\}}"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBlock HorizontalAlignment="Left" Margin="459,344,0,0" TextWrapping="Wrap" Text="Balance Sum:" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Left" Margin="556,344,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding TotalBalance, Mode=OneWay, StringFormat=\{0:F8\}}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="459,368,0,0" TextWrapping="Wrap" Text="Selected Sum:" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Left" Margin="556,368,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding TotalSelectedBalance, Mode=OneWay, StringFormat=\{0:F8\}}"/>
-        <TextBlock HorizontalAlignment="Left" Margin="459,392,0,0" TextWrapping="Wrap" Text="To Send:" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Left" Margin="556,392,0,0" TextWrapping="Wrap" Text="{Binding TotalToSend, Mode=OneWay, StringFormat=\{0:F8\}}" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="459,416,0,0" TextWrapping="Wrap" Text="Fee:" VerticalAlignment="Top" FontWeight="Bold"/>
-        <TextBlock HorizontalAlignment="Left" Margin="556,416,0,0" TextWrapping="Wrap" Text="{Binding Fee, Mode=OneWay, StringFormat=\{0:F8\}}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,344,0,0" TextWrapping="Wrap" Text="Size:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="494,344,0,0" TextWrapping="Wrap" Text="{Binding TransactionSize, Mode=OneWay}" VerticalAlignment="Top" ToolTip="Estimated final transaction size in Bytes"/>
+        <TextBlock HorizontalAlignment="Left" Margin="556,344,0,0" TextWrapping="Wrap" Text="Count:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="604,344,0,0" TextWrapping="Wrap" Text="{Binding SelectedUTXOs.Count, Mode=OneWay}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,375,0,0" TextWrapping="Wrap" Text="Balance Sum:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="556,375,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding TotalBalance, Mode=OneWay, StringFormat=\{0:F8\}}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,399,0,0" TextWrapping="Wrap" Text="Selected Sum:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="556,399,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding TotalSelectedBalance, Mode=OneWay, StringFormat=\{0:F8\}}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,432,0,0" TextWrapping="Wrap" Text="To Send:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="556,432,0,0" TextWrapping="Wrap" Text="{Binding TotalToSend, Mode=OneWay, StringFormat=\{0:F8\}}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="459,456,0,0" TextWrapping="Wrap" Text="Fee:" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBlock HorizontalAlignment="Left" Margin="556,456,0,0" TextWrapping="Wrap" Text="{Binding Fee, Mode=OneWay, StringFormat=\{0:F8\}}" VerticalAlignment="Top" ToolTip="{Binding FeePerByte, Mode=OneWay}"/>
 
-        <TextBox Text="{Binding RawTx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="64" Margin="10,447,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="444" VerticalScrollBarVisibility="Visible"/>
+        <TextBox Text="{Binding RawTx, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="85" Margin="10,486,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="444" VerticalScrollBarVisibility="Visible"/>
 
-        <Button Content="Make Tx" HorizontalAlignment="Left" Margin="459,447,0,0" VerticalAlignment="Top" Width="75" CommandParameter="{Binding SelectedItems, ElementName=listView}" Command="{Binding MakeTxCommand, Mode=OneWay}"/>
-        <ComboBox HorizontalAlignment="Left" Margin="539,447,0,0" VerticalAlignment="Top" Width="103" ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}"/>
-        <Button Content="QR" HorizontalAlignment="Left" Margin="459,486,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowQrWindowCommand, Mode=OneWay}"/>
+        <ComboBox HorizontalAlignment="Left" Margin="539,486,0,0" VerticalAlignment="Top" Width="103" ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}"/>
 
+        <Button Content="Make Tx" HorizontalAlignment="Left" Margin="459,486,0,0" VerticalAlignment="Top" Width="75" CommandParameter="{Binding SelectedItems, ElementName=listView}" Command="{Binding MakeTxCommand, Mode=OneWay}"/>
+        <Button Content="QR" HorizontalAlignment="Left" Margin="459,516,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowQrWindowCommand, Mode=OneWay}"/>
+        <Button Content="Copy" HorizontalAlignment="Left" Margin="459,546,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CopyTxCommand, Mode=OneWay}"/>
     </Grid>
 </Window>
