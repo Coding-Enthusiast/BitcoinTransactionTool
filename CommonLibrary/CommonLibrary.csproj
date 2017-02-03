@@ -44,7 +44,7 @@
     <Compile Include="AsyncCommand.cs" />
     <Compile Include="AsyncCommandBase.cs" />
     <Compile Include="BitcoinConversions.cs" />
-    <Compile Include="CommonBase.cs" />
+    <Compile Include="BindableBase.cs" />
     <Compile Include="NotifyTaskCompletion.cs" />
     <Compile Include="NumberConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
