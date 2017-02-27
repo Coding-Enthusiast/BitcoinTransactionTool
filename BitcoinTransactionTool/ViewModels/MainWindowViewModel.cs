@@ -233,6 +233,12 @@ namespace BitcoinTransactionTool.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// An instance of the IWindowManager to show new views.
+        /// </summary>
+        private IWindowManager winManager;
+
         #endregion
 
 
@@ -311,7 +317,7 @@ namespace BitcoinTransactionTool.ViewModels
         {
             QrViewModel vm = new QrViewModel();
             vm.QRCode = TransactionQR.Build(RawTx);
-            IWindowManager winManager = new QrWinManager();
+            winManager = new QrWinManager();
             winManager.Show(vm);
         }
 
@@ -334,7 +340,7 @@ namespace BitcoinTransactionTool.ViewModels
         {
             TxJsonViewModel vm = new TxJsonViewModel();
             vm.RawTx = RawTx;
-            IWindowManager winManager = new TxJsonWinManager();
+            winManager = new TxJsonWinManager();
             winManager.Show(vm);
         }
 
@@ -347,7 +353,7 @@ namespace BitcoinTransactionTool.ViewModels
         {
             TransactionEditViewModel vm = new TransactionEditViewModel();
             vm.Tx = RawTx;
-            IWindowManager winManager = new TxEditWinManager();
+            winManager = new TxEditWinManager();
             winManager.Show(vm);
         }
 
