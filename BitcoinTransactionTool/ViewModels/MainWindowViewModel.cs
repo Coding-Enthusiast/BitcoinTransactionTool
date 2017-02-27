@@ -12,7 +12,7 @@ using CommonLibrary;
 
 namespace BitcoinTransactionTool.ViewModels
 {
-    public class MainWindowViewModel : BindableBase
+    public class MainWindowViewModel : CommonBase
     {
         public MainWindowViewModel()
         {
@@ -29,10 +29,9 @@ namespace BitcoinTransactionTool.ViewModels
             // Initializing Commands.
             GetUTXOCommand = AsyncCommand.Create(() => GetUTXO());
             MakeTxCommand = new BindableCommand(MakeTx, CanMakeTx);
-            CopyTxCommand = new RelayCommand(CopyTx, () => !string.IsNullOrEmpty(RawTx));
-            ShowQrWindowCommand = new RelayCommand(ShowQrWindow, () => !string.IsNullOrEmpty(RawTx));
-            ShowJsonWindowCommand = new RelayCommand(ShowJsonWindow, () => !string.IsNullOrEmpty(RawTx));
+            ShowQrWindowCommand = new RelayCommand(ShowQrWindow, CanShowQr);
             ShowEditWindowCommand = new RelayCommand(ShowEditWindow);
+            CopyTxCommand = new RelayCommand(CopyTx, CanCopyTx);
 
             // These moved below to avoid throwing null exception.
             ReceiveList.ListChanged += ReceiveList_ListChanged;
@@ -49,16 +48,19 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public ObservableCollection<ApiNames> ApiList { get; set; }
 
-
-        /// <summary>
-        /// Api service that will be used to retreive UTXOs.
-        /// </summary>
+        private ApiNames selectedApi;
         public ApiNames SelectedApi
         {
             get { return selectedApi; }
-            set { SetField(ref selectedApi, value); }
+            set
+            {
+                if (selectedApi != value)
+                {
+                    selectedApi = value;
+                    RaisePropertyChanged("SelectedApi");
+                }
+            }
         }
-        private ApiNames selectedApi;
 
 
         /// <summary>
@@ -70,29 +72,38 @@ namespace BitcoinTransactionTool.ViewModels
         /// <summary>
         /// List of all UTXOs that can be used for spending.
         /// </summary>
+        private BindingList<UTXO> uTXOList;
         public BindingList<UTXO> UtxoList
         {
             get { return uTXOList; }
-            set { SetField(ref uTXOList, value); }
+            set
+            {
+                if (uTXOList != value)
+                {
+                    uTXOList = value;
+                    RaisePropertyChanged("UtxoList");
+                    RaisePropertyChanged("TotalBalance");
+                }
+            }
         }
-        private BindingList<UTXO> uTXOList;
 
 
-        /// <summary>
-        /// LockTime value used in transactions.
-        /// </summary>
+        private UInt32 lockTime;
         public UInt32 LockTime
         {
             get { return lockTime; }
-            set { SetField(ref lockTime, value); }
+            set
+            {
+                if (lockTime != value)
+                {
+                    lockTime = value;
+                    RaisePropertyChanged("LockTime");
+                }
+            }
         }
-        private UInt32 lockTime;
 
 
-        /// <summary>
-        /// Estimated size of the transaction based on number of inputs and outputs.
-        /// </summary>
-        [DependsOnProperty("SelectedUTXOs")]
+
         public int TransactionSize
         {
             get
@@ -106,7 +117,6 @@ namespace BitcoinTransactionTool.ViewModels
         /// <summary>
         /// Sum of Sending Addresses balances which shows the total available amount to spend.
         /// </summary>
-        [DependsOnProperty("UtxoList")]
         public decimal TotalBalance
         {
             get
@@ -115,11 +125,9 @@ namespace BitcoinTransactionTool.ViewModels
             }
         }
 
-
         /// <summary>
-        /// Sum of selected UTXOs amounts, which is amount that is about to be spent.
+        /// Sum of selected UTXOs amounts.
         /// </summary>
-        [DependsOnProperty("SelectedUTXOs")]
         public decimal TotalSelectedBalance
         {
             get
@@ -127,7 +135,6 @@ namespace BitcoinTransactionTool.ViewModels
                 return SelectedUTXOs.Sum(x => x.AmountBitcoin);
             }
         }
-
 
         /// <summary>
         /// Total amount which is being sent to all the Receiving Addresses.
@@ -140,30 +147,25 @@ namespace BitcoinTransactionTool.ViewModels
             }
         }
 
-
         /// <summary>
         /// Amount of fee which is being paid (Must be >= 0).
         /// </summary>
-        [DependsOnProperty(new string[] { "TotalSelectedBalance", "TotalToSend", "SelectedUTXOs" })]
         public decimal Fee
         {
             get
             {
-                return TotalSelectedBalance - TotalToSend;
+                decimal totalAvailableFromUTXOs = SelectedUTXOs.Sum(x => x.AmountBitcoin);
+                return totalAvailableFromUTXOs - TotalToSend;
             }
         }
 
 
-        /// <summary>
-        /// Amount of fee in satoshi per byte based on estimated transaction size and fee amount.
-        /// </summary>
-        [DependsOnProperty("SelectedUTXOs")]
         public string FeePerByte
         {
-            get
+            get 
             {
                 int size = 0;
-                if (TransactionSize != 0)
+                if (TransactionSize!= 0)
                 {
                     size = (int)(Fee / BitcoinConversions.Satoshi) / TransactionSize;
                 }
@@ -181,9 +183,18 @@ namespace BitcoinTransactionTool.ViewModels
             get { return selectedUTXOs; }
             set
             {
-                SetField(ref selectedUTXOs, value);
+                if (selectedUTXOs != value)
+                {
+                    selectedUTXOs = value;
+                    RaisePropertyChanged("SelectedUTXOs");
+                    RaisePropertyChanged("TotalSelectedBalance");
+                    RaisePropertyChanged("Fee");
+                    RaisePropertyChanged("FeePerByte");
+                    RaisePropertyChanged("TransactionSize");
 
-                MakeTxCommand.RaiseCanExecuteChanged();
+                    // Raise button canExecute event
+                    MakeTxCommand.RaiseCanExecuteChanged();
+                }
             }
         }
 
@@ -195,10 +206,12 @@ namespace BitcoinTransactionTool.ViewModels
 
         void ReceiveList_ListChanged(object sender, ListChangedEventArgs e)
         {
+            RaisePropertyChanged("Fee");
             RaisePropertyChanged("FeePerByte");
             RaisePropertyChanged("TotalToSend");
             RaisePropertyChanged("TransactionSize");
 
+            // Check
             MakeTxCommand.RaiseCanExecuteChanged();
         }
 
@@ -212,9 +225,15 @@ namespace BitcoinTransactionTool.ViewModels
         public Transaction.WalletType SelectedWalletType
         {
             get { return selectedWalletType; }
-            set { SetField(ref selectedWalletType, value); }
+            set
+            {
+                if (selectedWalletType != value)
+                {
+                    selectedWalletType = value;
+                    RaisePropertyChanged("SelectedWalletType");
+                }
+            }
         }
-
 
         /// <summary>
         /// Raw Unsigned Transaction result.
@@ -225,11 +244,14 @@ namespace BitcoinTransactionTool.ViewModels
             get { return rawTx; }
             set
             {
-                SetField(ref rawTx, value);
-
-                CopyTxCommand.RaiseCanExecuteChanged();
-                ShowQrWindowCommand.RaiseCanExecuteChanged();
-                ShowJsonWindowCommand.RaiseCanExecuteChanged();
+                if (rawTx != value)
+                {
+                    rawTx = value;
+                    RaisePropertyChanged("RawTx");
+                    ShowEditWindowCommand.RaiseCanExecuteChanged();
+                    ShowQrWindowCommand.RaiseCanExecuteChanged();
+                    CopyTxCommand.RaiseCanExecuteChanged();
+                }
             }
         }
 
@@ -239,7 +261,7 @@ namespace BitcoinTransactionTool.ViewModels
         #region commands
 
         /// <summary>
-        /// Handles getting the ListView.SelectedItems (multiple items)
+        /// Handles getting the ListView.SelectedItems (multiple)
         /// </summary>
         public BindableCommand SelectionChangedCommand { get; private set; }
         private void SelectionChanged(object param)
@@ -314,6 +336,17 @@ namespace BitcoinTransactionTool.ViewModels
             IWindowManager winManager = new QrWinManager();
             winManager.Show(vm);
         }
+        private bool CanShowQr()
+        {
+            if (string.IsNullOrEmpty(RawTx))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
 
         /// <summary>
@@ -324,18 +357,16 @@ namespace BitcoinTransactionTool.ViewModels
         {
             Clipboard.SetText(RawTx);
         }
-
-
-        /// <summary>
-        /// Opens a new window to represent the RawTx as JSON string.
-        /// </summary>
-        public RelayCommand ShowJsonWindowCommand { get; private set; }
-        private void ShowJsonWindow()
+        private bool CanCopyTx()
         {
-            TxJsonViewModel vm = new TxJsonViewModel();
-            vm.RawTx = RawTx;
-            IWindowManager winManager = new TxJsonWinManager();
-            winManager.Show(vm);
+            if (string.IsNullOrEmpty(RawTx))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
 

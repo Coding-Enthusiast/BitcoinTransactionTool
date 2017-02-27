@@ -4,7 +4,7 @@ using CommonLibrary;
 
 namespace BitcoinTransactionTool.Models
 {
-    public class TransactionBase : BindableBase
+    public class TransactionBase : CommonBase
     {
         public enum TxStatus
         {

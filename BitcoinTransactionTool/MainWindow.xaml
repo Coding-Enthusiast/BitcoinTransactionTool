@@ -4,7 +4,7 @@
         xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
         
-        Title="Bitcoin Transaction Tool - Version Beta" Height="619" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Bitcoin Transaction Tool - Version Beta" Height="614" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -60,7 +60,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Confirmation" DisplayMemberBinding="{Binding Confirmation}"/>
-                    <GridViewColumn Header="Amount" Width="100" DisplayMemberBinding="{Binding Amount, StringFormat=\{0:N0\}}"/>
+                    <GridViewColumn Header="Amount" Width="100" DisplayMemberBinding="{Binding Amount}"/>
                     <GridViewColumn Header="Hash" Width="435" DisplayMemberBinding="{Binding TxHash}"/>
                 </GridView>
             </ListView.View>
@@ -117,6 +117,5 @@
         <Button Content="Make Tx" HorizontalAlignment="Left" Margin="459,486,0,0" VerticalAlignment="Top" Width="75" CommandParameter="{Binding SelectedItems, ElementName=listView}" Command="{Binding MakeTxCommand, Mode=OneWay}"/>
         <Button Content="QR" HorizontalAlignment="Left" Margin="459,516,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowQrWindowCommand, Mode=OneWay}"/>
         <Button Content="Copy" HorizontalAlignment="Left" Margin="459,546,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CopyTxCommand, Mode=OneWay}"/>
-        <Button Content="JSON" HorizontalAlignment="Left" Margin="569,546,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowJsonWindowCommand, Mode=OneWay}"/>
     </Grid>
 </Window>

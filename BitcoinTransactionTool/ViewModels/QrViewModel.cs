@@ -4,7 +4,7 @@ using CommonLibrary;
 
 namespace BitcoinTransactionTool.ViewModels
 {
-    public class QrViewModel : BindableBase
+    public class QrViewModel : CommonBase
     {
         /// <summary>
         /// QR Code representing the Raw Transaction.

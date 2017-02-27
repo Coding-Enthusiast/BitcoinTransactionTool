@@ -294,7 +294,7 @@ namespace BitcoinTransactionTool.Services
                 + outputSize * outputCount
                 + 4; //LockTime
 
-            return (totalSize <= 10) ? 0 : totalSize;
+            return totalSize;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace BitcoinTransactionTool.ViewModels
     /// and also option to receive input Tx values from Api to calculate Fees
     /// and also adding ability to edit the transaction and create a new Raw Unsigned Tx with the same inputs but different fee.
     /// </summary>
-    public class TransactionEditViewModel : BindableBase
+    public class TransactionEditViewModel : CommonBase
     {
         public TransactionEditViewModel()
         {
