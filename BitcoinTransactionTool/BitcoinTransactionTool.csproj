@@ -83,6 +83,7 @@
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
     <Compile Include="ViewModels\TransactionEditViewModel.cs" />
+    <Compile Include="ViewModels\TxJsonViewModel.cs" />
     <Compile Include="Views\QrView.xaml.cs">
       <DependentUpon>QrView.xaml</DependentUpon>
     </Compile>
@@ -94,6 +95,9 @@
     </Compile>
     <Compile Include="Views\TransactionEditWindow.xaml.cs">
       <DependentUpon>TransactionEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TxJsonWindow.xaml.cs">
+      <DependentUpon>TxJsonWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -120,6 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TransactionEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TxJsonWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
