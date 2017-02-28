@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace CommonLibrary
 {
-    public class ValidatableBase : CommonBase, INotifyDataErrorInfo
+    public class ValidatableBase : BindableBase, INotifyDataErrorInfo
     {
         private Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
 
