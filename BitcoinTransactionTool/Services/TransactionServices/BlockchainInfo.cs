@@ -29,7 +29,7 @@ namespace BitcoinTransactionTool.Services.TransactionServices
                 u.AddressHash160 = script.Substring("76a914".Length, script.Length - "76a91488ac".Length);
                 u.Address = BitcoinConversions.Hash160ToBase58(u.AddressHash160);
                 u.TxHash = item["tx_hash_big_endian"].ToString();
-                u.Amount = (int)item["value"];
+                u.Amount = (ulong)item["value"];
                 u.Confirmation = (int)item["confirmations"];
                 u.OutIndex = (uint)item["tx_output_n"];
                 resp.Result.Add(u);

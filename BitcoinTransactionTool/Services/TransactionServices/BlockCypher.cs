@@ -34,7 +34,7 @@ namespace BitcoinTransactionTool.Services.TransactionServices
                                 Address = item["address"].ToString(),
                                 AddressHash160 = "",
                                 TxHash = tx["tx_hash"].ToString(),
-                                Amount = (int)tx["value"],
+                                Amount = (ulong)tx["value"],
                                 Confirmation = (int)tx["confirmations"],
                                 OutIndex = (uint)tx["tx_output_n"]
                             };
@@ -52,7 +52,7 @@ namespace BitcoinTransactionTool.Services.TransactionServices
                         Address = apiResp.Result["address"].ToString(),
                         AddressHash160 = "",
                         TxHash = tx["tx_hash"].ToString(),
-                        Amount = (int)tx["value"],
+                        Amount = (ulong)tx["value"],
                         Confirmation = (int)tx["confirmations"],
                         OutIndex = (uint)tx["tx_output_n"]
                     };
