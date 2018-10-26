@@ -1,14 +1,12 @@
-﻿using System;
+﻿using CommonLibrary.CryptoEncoders;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
 
 namespace CommonLibrary
 {
-    public class ValidatableBase : BindableBase, INotifyDataErrorInfo
+    public class ValidatableBase : InpcBase, INotifyDataErrorInfo
     {
         private Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
 
@@ -59,78 +57,44 @@ namespace CommonLibrary
 
         public void RaiseErrorsChanged(string propertyName)
         {
-            if (ErrorsChanged != null)
-            {
-                ErrorsChanged(this, new DataErrorsChangedEventArgs(propertyName));
-            }
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
         public void Validate(string address)
         {
-            //A bitcoin address starts with either 1 or 3 and is 26-35 alphanumeric characters
-            if (!string.IsNullOrWhiteSpace(address) && address.Length >= 26 && address.Length <= 35)
+            if (string.IsNullOrEmpty(address))
             {
-                if (address.StartsWith("1") || address.StartsWith("3"))
+                AddError(nameof(address), "Address can not be empty!");
+            }
+            else if (address.StartsWith("1") || address.StartsWith("3"))
+            {
+                Base58 b58enc = new Base58();
+                if (b58enc.IsValid(address))
                 {
-                    if (Base58Check(address))
-                    {
-                        RemoveError("Address", "");
-                    }
-                    else
-                    {
-                        AddError("Address", "Address is not Base58 encoded!");
-                    }
+                    RemoveError(nameof(address), "");
                 }
                 else
                 {
-                    AddError("Address", "Must start with 1 or 3.");
+                    AddError(nameof(address), "Invalid Base58 encoded address!");
+                }
+            }
+            else if (address.StartsWith("bc"))
+            {
+                Bech32 b32enc = new Bech32();
+                if (b32enc.IsValid(address))
+                {
+                    RemoveError(nameof(address), "");
+                }
+                else
+                {
+                    AddError(nameof(address), "Invalid Bech32 encoded address!");
                 }
             }
             else
             {
-                AddError("Address", "Address can not be empty!");
+                AddError(nameof(address), "Invalid address format!");
             }
         }
 
-        private bool Base58Check(string btcAddressFormat)
-        {
-            //Characters used in Base58Encoding which is all chars excluding "0OIl" 
-            string Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-
-            BigInteger intData = 0;
-            foreach (char c in btcAddressFormat)
-            {
-                int digit = Base58Chars.IndexOf(c);
-                intData = intData * 58 + digit;
-            }
-            int leadingZeroCount = btcAddressFormat.TakeWhile(c => c == '1').Count();
-            var leadingZeros = Enumerable.Repeat((byte)0, leadingZeroCount);
-            var bytesWithoutLeadingZeros =
-                intData.ToByteArray()
-                .Reverse()// to big endian
-                .SkipWhile(b => b == 0);//strip sign byte
-            byte[] dataAsByte = leadingZeros.Concat(bytesWithoutLeadingZeros).ToArray();
-
-            int lengthWithoutChecksum = dataAsByte.Length - 4;
-            byte[] bytesWithoutChecksum = new byte[lengthWithoutChecksum];
-            Array.Copy(dataAsByte, bytesWithoutChecksum, lengthWithoutChecksum);
-
-            // calculate the checksum
-            SHA256 sha = new SHA256Managed();
-            byte[] hash1 = sha.ComputeHash(bytesWithoutChecksum);
-            byte[] hash2 = sha.ComputeHash(hash1);
-
-            if (hash2[0] != dataAsByte[lengthWithoutChecksum] ||
-                hash2[1] != dataAsByte[lengthWithoutChecksum + 1] ||
-                hash2[2] != dataAsByte[lengthWithoutChecksum + 2] ||
-                hash2[3] != dataAsByte[lengthWithoutChecksum + 3])
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
     }
 }

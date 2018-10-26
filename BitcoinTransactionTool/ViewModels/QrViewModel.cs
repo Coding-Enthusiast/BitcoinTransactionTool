@@ -1,26 +1,15 @@
-﻿using System.Windows.Media.Imaging;
-
-using CommonLibrary;
+﻿using CommonLibrary;
+using System.Windows.Media.Imaging;
 
 namespace BitcoinTransactionTool.ViewModels
 {
-    public class QrViewModel : BindableBase
+    public class QrViewModel : InpcBase
     {
-        /// <summary>
-        /// QR Code representing the Raw Transaction.
-        /// </summary>
         private BitmapImage qRCode;
         public BitmapImage QRCode
         {
             get { return qRCode; }
-            set
-            {
-                if (qRCode != value)
-                {
-                    qRCode = value;
-                    RaisePropertyChanged("QRCode");
-                }
-            }
+            set { SetField(ref qRCode, value); }
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace CommonLibrary
 {
-    public class BindableBase : INotifyPropertyChanged
+    public class InpcBase : INotifyPropertyChanged
     {
-        public BindableBase()
+        public InpcBase()
         {
             PropertyDependencyMap = new Dictionary<string, List<string>>();
 

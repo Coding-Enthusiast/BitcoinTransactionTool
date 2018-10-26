@@ -4,7 +4,7 @@
         xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
         
-        Title="Bitcoin Transaction Tool - Version Beta" Height="619" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Bitcoin Transaction Tool - Version Beta" Height="666" Width="673.164" FontSize="14" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -38,11 +38,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <ComboBox HorizontalAlignment="Left" Margin="448,37,0,0" VerticalAlignment="Top" Width="116" ItemsSource="{Binding ApiList}" Height="32" SelectedItem="{Binding ApiList/}" VerticalContentAlignment="Center"/>
+        <ComboBox HorizontalAlignment="Left" Margin="448,37,0,0" VerticalAlignment="Top" Width="116" ItemsSource="{Binding ApiList}" Height="32" SelectedItem="{Binding SelectedApi}" VerticalContentAlignment="Center"/>
         <Button Content="Get UTXOs" HorizontalAlignment="Left" Margin="569,37,0,0" VerticalAlignment="Top" Width="73" Height="32" Command="{Binding GetUTXOCommand, Mode=OneWay}"/>
 
         <Label Content="Version:" HorizontalAlignment="Left" Margin="449,80,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="1" HorizontalAlignment="Left" Height="26" Margin="537,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105" ToolTip="The current consensus rule is version 1." IsReadOnly="True"/>
+        <TextBox Text="{Binding TxVersion, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="26" Margin="537,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105"/>
         <Label Content="LockTime:" HorizontalAlignment="Left" Margin="449,110,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
         <TextBox Text="{Binding LockTime, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="26" Margin="537,112,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="105"/>
 
@@ -118,5 +118,7 @@
         <Button Content="QR" HorizontalAlignment="Left" Margin="459,516,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowQrWindowCommand, Mode=OneWay}"/>
         <Button Content="Copy" HorizontalAlignment="Left" Margin="459,546,0,0" VerticalAlignment="Top" Width="75" Command="{Binding CopyTxCommand, Mode=OneWay}"/>
         <Button Content="JSON" HorizontalAlignment="Left" Margin="569,546,0,0" VerticalAlignment="Top" Width="75" Command="{Binding ShowJsonWindowCommand, Mode=OneWay}"/>
+        
+        <TextBlock Text="{Binding Errors}" HorizontalAlignment="Left" Margin="10,576,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="52" Width="647"/>
     </Grid>
 </Window>

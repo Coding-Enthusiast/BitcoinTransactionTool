@@ -72,13 +72,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\BitcoinAddress.cs" />
-    <Compile Include="Models\BitcoinTransaction.cs" />
+    <Compile Include="Models\OutPointModel.cs" />
+    <Compile Include="Models\TxInModel.cs" />
+    <Compile Include="Models\TxModel.cs" />
     <Compile Include="Models\UTXO.cs" />
-    <Compile Include="Services\ApiServices.cs" />
+    <Compile Include="Services\Api.cs" />
+    <Compile Include="Services\ErrorCollection.cs" />
     <Compile Include="Services\OPCodes.cs" />
     <Compile Include="Services\PushServices.cs" />
-    <Compile Include="Services\Transaction.cs" />
+    <Compile Include="Services\Response.cs" />
     <Compile Include="Services\TransactionQR.cs" />
+    <Compile Include="Services\TransactionServices\BlockchainInfo.cs" />
+    <Compile Include="Services\TransactionServices\BlockCypher.cs" />
+    <Compile Include="Services\TxService.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
