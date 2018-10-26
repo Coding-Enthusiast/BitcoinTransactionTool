@@ -6,7 +6,7 @@
              xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
              mc:Ignorable="d" Width="626" FontSize="14" Height="444">
     <Grid>
-        <TextBox Text="{Binding Tx, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="59" Margin="10,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
+        <TextBox Text="{Binding RawTx, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="59" Margin="10,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
 
         <Button Content="Decode Tx" HorizontalAlignment="Left" Margin="537,43,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DecodeTxCommand, Mode=OneWay}" Height="59"/>
 
@@ -14,24 +14,24 @@
         <TextBox Text="{Binding BTx.TxId}"  HorizontalAlignment="Left" Height="26" Margin="71,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="461"/>
 
         <Label Content="Version:" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding BTx.Version, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="50" HorizontalAlignment="Left" Margin="81,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
+        <TextBox Text="{Binding Trx.Version, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="50" HorizontalAlignment="Left" Margin="81,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
 
         <Label Content="Tx Status:" HorizontalAlignment="Left" Margin="142,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding BTx.Status}" Height="25" Width="70" HorizontalAlignment="Left" Margin="232,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
+        <TextBox Text="{Binding Trx.Status}" Height="25" Width="70" HorizontalAlignment="Left" Margin="232,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
 
         <Label Content="Lock Time:" HorizontalAlignment="Left" Margin="313,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding BTx.LockTime, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="70" HorizontalAlignment="Left" Margin="402,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <TextBox Text="{Binding Trx.LockTime, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="70" HorizontalAlignment="Left" Margin="402,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
 
         <Label Content="RBF:" HorizontalAlignment="Left" Margin="490,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding BTx.IsRbf, Mode=OneWay}" Height="25" Width="70" HorizontalAlignment="Left" Margin="537,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
+        <TextBox Text="{Binding Trx.IsRbf, Mode=OneWay}" Height="25" Width="70" HorizontalAlignment="Left" Margin="537,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
 
-        <DataGrid HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Height="104" Width="602" ItemsSource="{Binding TxInList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible">
+        <DataGrid HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Height="104" Width="602" ItemsSource="{Binding Trx.TxInList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="TxId" Width="485" Binding="{Binding TxId}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="TxId" Width="485" Binding="{Binding Outpoint.TxId}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Sequence" Width="90" Binding="{Binding Sequence}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox Text="{Binding RawTx}"  HorizontalAlignment="Left" Height="59" Margin="10,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
+        <TextBox Text="{Binding RawTx2}"  HorizontalAlignment="Left" Height="59" Margin="10,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
         <DataGrid HorizontalAlignment="Left" Margin="10,262,0,0" VerticalAlignment="Top" Height="104" Width="602" ItemsSource="{Binding ReceiveList, Mode=TwoWay}" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Receiving Address" Width="485" Binding="{Binding Address, Mode=TwoWay}"/>

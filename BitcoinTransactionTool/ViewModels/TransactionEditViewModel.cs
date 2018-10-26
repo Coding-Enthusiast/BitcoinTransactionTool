@@ -1,13 +1,15 @@
-﻿using System;
+﻿using BitcoinTransactionTool.Models;
+using BitcoinTransactionTool.Services;
+using CommonLibrary;
+using CommonLibrary.CryptoEncoders;
+using CommonLibrary.Extensions;
+using CommonLibrary.Transaction;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-
-using BitcoinTransactionTool.Models;
-using BitcoinTransactionTool.Services;
-using CommonLibrary;
 
 namespace BitcoinTransactionTool.ViewModels
 {
@@ -17,84 +19,54 @@ namespace BitcoinTransactionTool.ViewModels
     /// and also option to receive input Tx values from Api to calculate Fees
     /// and also adding ability to edit the transaction and create a new Raw Unsigned Tx with the same inputs but different fee.
     /// </summary>
-    public class TransactionEditViewModel : BindableBase
+    public class TransactionEditViewModel : ViewModelBase
     {
         public TransactionEditViewModel()
         {
-            DecodeTxCommand = new RelayCommand(DecodeTx, CanDecodeTx);
-            MakeTxCommand = new RelayCommand(MakeTx, CanMakeTx);
-
+            WalletTypeList = new ObservableCollection<WalletType>(Enum.GetValues(typeof(WalletType)).Cast<WalletType>().ToList());
+            SelectedWalletType = WalletType.Normal;
             ReceiveList.ListChanged += ReceiveList_ListChanged;
-
-            WalletTypeList = new ObservableCollection<Transaction.WalletType>(Enum.GetValues(typeof(Transaction.WalletType)).Cast<Transaction.WalletType>().ToList());
-            SelectedWalletType = Transaction.WalletType.Normal;
+            DecodeTxCommand = new RelayCommand(DecodeTx);
+            MakeTxCommand = new RelayCommand(MakeTx, CanMakeTx);
         }
 
 
 
-        private BitcoinTransaction bTx;
-        public BitcoinTransaction BTx
+        public ObservableCollection<WalletType> WalletTypeList { get; set; }
+
+        private WalletType selectedWalletType;
+        public WalletType SelectedWalletType
         {
-            get { return bTx; }
-            set
-            {
-                if (bTx != value)
-                {
-                    bTx = value;
-                    RaisePropertyChanged("BTx");
-                }
-            }
+            get { return selectedWalletType; }
+            set { SetField(ref selectedWalletType, value); }
         }
 
-        private string tx;
-        public string Tx
+        private string rawTx;
+        public string RawTx
         {
-            get { return tx; }
-            set
-            {
-                if (tx != value)
-                {
-                    tx = value;
-                    RaisePropertyChanged("Tx");
-                    DecodeTxCommand.RaiseCanExecuteChanged();
-                }
-            }
+            get { return rawTx; }
+            set { SetField(ref rawTx, value); }
         }
 
-        private BindingList<TxIn> txInList;
-        public BindingList<TxIn> TxInList
+        private string rawTx2;
+        public string RawTx2
         {
-            get { return txInList; }
-            set
-            {
-                if (txInList != value)
-                {
-                    txInList = value;
-                    RaisePropertyChanged("TxInList");
-                }
-            }
+            get { return rawTx2; }
+            set { SetField(ref rawTx2, value); }
         }
 
+        private TxModel trx;
+        public TxModel Trx
+        {
+            get { return trx; }
+            set { SetField(ref trx, value); }
+        }
 
         private BindingList<ReceivingAddress> receiveList;
         public BindingList<ReceivingAddress> ReceiveList
         {
-            get
-            {
-                if (receiveList == null)
-                {
-                    receiveList = new BindingList<ReceivingAddress>();
-                }
-                return receiveList;
-            }
-            set
-            {
-                if (receiveList != value)
-                {
-                    receiveList = value;
-                    RaisePropertyChanged("ReceiveList");
-                }
-            }
+            get { return receiveList ?? new BindingList<ReceivingAddress>(); }
+            set { SetField(ref receiveList, value); }
         }
         void ReceiveList_ListChanged(object sender, ListChangedEventArgs e)
         {
@@ -102,211 +74,44 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
-        private decimal totalInput;
-        public decimal TotalInput
-        {
-            get { return totalInput; }
-            set
-            {
-                if (totalInput != value)
-                {
-                    totalInput = value;
-                    RaisePropertyChanged("TotalInput");
-                }
-            }
-        }
-
-        private decimal totalOutput;
-        public decimal TotalOutput
-        {
-            get { return totalOutput; }
-            set
-            {
-                if (totalOutput != value)
-                {
-                    totalOutput = value;
-                    RaisePropertyChanged("TotalOutput");
-                }
-            }
-        }
-
-        private decimal fee;
-        public decimal Fee
-        {
-            get { return fee; }
-            set
-            {
-                if (fee != value)
-                {
-                    fee = value;
-                    RaisePropertyChanged("Fee");
-                }
-            }
-        }
-
-        private string rawTx;
-        public string RawTx
-        {
-            get { return rawTx; }
-            set
-            {
-                if (rawTx != value)
-                {
-                    rawTx = value;
-                    RaisePropertyChanged("RawTx");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Since Electrum (possible other wallets) only recognize particular scripts this is required.
-        /// </summary>
-        public ObservableCollection<Transaction.WalletType> WalletTypeList { get; set; }
-
-        private Transaction.WalletType selectedWalletType;
-        public Transaction.WalletType SelectedWalletType
-        {
-            get { return selectedWalletType; }
-            set
-            {
-                if (selectedWalletType != value)
-                {
-                    selectedWalletType = value;
-                    RaisePropertyChanged("SelectedWalletType");
-                }
-            }
-        }
-
-
-
         public RelayCommand DecodeTxCommand { get; private set; }
         private void DecodeTx()
         {
             try
             {
-                BTx = Transaction.DecodeRawTx(Tx);
-                TxInList = new BindingList<TxIn>();
-                foreach (var item in BTx.TxInList)
-                {
-                    TxInList.Add(item);
-                }
-                // The following commented line throws Collection Read Only when item is added to BindingList!
-                // TxInList = new BindingList<TxIn>(bTx.TxInList);
-
-                ReceiveList = new BindingList<ReceivingAddress>();
-                foreach (var item in BTx.TxOutList)
-                {
-                    ReceivingAddress r = new ReceivingAddress();
-                    r.Address = GetAddressFromScript(item.PkScript);
-                    r.Payment = item.Amount * BitcoinConversions.Satoshi;
-                    ReceiveList.Add(r);
-                }
-
-                TotalInput = 0;
-                TotalOutput = BTx.TxOutList.Select(x => x.Amount).Aggregate((a, b) => a + b) / BitcoinConversions.Satoshi;
-                Fee = 0;
-
-                MakeTxCommand.RaiseCanExecuteChanged();
+                Trx = TxService.DecodeRawTx(rawTx);
+                ReceiveList = new BindingList<ReceivingAddress>(Trx.TxOutList.Select(x => new ReceivingAddress() { Address = x.PkScript, Payment = x.Amount }).ToArray());
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-        private bool CanDecodeTx()
-        {
-            if (string.IsNullOrWhiteSpace(Tx))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+
         }
 
 
-        private string GetAddressFromScript(string script)
-        {
-            if (string.IsNullOrEmpty(script))
-            {
-                return string.Empty;
-            }
-            string firstOP = script.Substring(0, 2);
-            string remove = string.Empty;
-            if (firstOP == NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_DUP, 1))
-            {
-                remove =
-                    NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_DUP, 1) +
-                    NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_HASH160, 1) +
-                    NumberConversions.IntToHex(40 / 2, 1);
-            }
-            else if (firstOP == NumberConversions.IntToHex(0x01, 1))
-            {
-                remove =
-                    NumberConversions.IntToHex(0x01, 1) +
-                    NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_INVALIDOPCODE, 1) +
-                    NumberConversions.IntToHex(0x16, 1) +
-                    NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_PUBKEYHASH, 1) +
-                    NumberConversions.IntToHex((int)OPCodes.opcodetype.OP_0, 1);
-            }
-
-            string addressHash = script.Substring(remove.Length, 40);
-            return BitcoinConversions.Hash160ToBase58(addressHash);
-        }
-
-
-        /// <summary>
-        /// Creates the Raw Unsigned Transaction.
-        /// </summary>
         public RelayCommand MakeTxCommand { get; private set; }
         private void MakeTx()
         {
-            List<UTXO> uList = new List<UTXO>();
-            foreach (var item in TxInList)
-            {
-                UTXO u = new UTXO();
-                u.TxHash = item.TxId;
-                u.OutIndex = item.OutIndex;
-                if (BTx.Status == BitcoinTransaction.TxStatus.Signed)
+            Transaction tx = new Transaction(
+                trx.Version,
+                trx.TxInCount,
+                trx.TxInList.Select(x => new TxIn()
                 {
-                    int pubKeyLength = 65;
-                    string pubKey = item.ScriptSig.Substring((item.ScriptSigLength * 2) - (pubKeyLength + 1));
-                    u.Address = BitcoinConversions.PubKeyToBase58(pubKey);
-                    u.AddressHash160 = BitcoinConversions.ByteArrayToHex(BitcoinConversions.PubKeyToHash160(pubKey));
-                }
-                else
-                {
-                    var addr = GetAddressFromScript(item.ScriptSig);
-                    if (string.IsNullOrEmpty(addr))
-                    {
-                        u.Address = string.Empty;
-                        u.AddressHash160 = string.Empty;
-                    }
-                    else
-                    {
-                        u.Address = addr;
-                        u.AddressHash160 = BitcoinConversions.Base58ToHash160(addr);
-                    }
-                }
+                    Outpoint = new Outpoint() { Index = x.Outpoint.Index, TxId = x.Outpoint.TxId },
+                    ScriptSig = x.ScriptSig,
+                    ScriptSigLength = new CompactInt(x.ScriptSigLength),
+                    Sequence = x.Sequence
+                }).ToArray(),
+                trx.TxOutCount,
+                trx.TxOutList.ToArray(),
+                trx.LockTime);
 
-                uList.Add(u);
-            }
-
-            try
-            {
-                UInt32 lockTime = 0;
-                RawTx = Transaction.CreateRawTx(uList, ReceiveList.ToList(), lockTime, SelectedWalletType);
-            }
-            catch (Exception ex)
-            {
-                RawTx = string.Empty;
-                MessageBox.Show(ex.Message);
-            }
+            RawTx2 = tx.Serialize().ToBase16();
         }
         private bool CanMakeTx()
         {
-            if (BTx == null || ReceiveList.Select(x => x.HasErrors).Contains(true))
+            if (Trx == null || ReceiveList.Select(x => x.HasErrors).Contains(true))
             {
                 return false;
             }
@@ -315,5 +120,6 @@ namespace BitcoinTransactionTool.ViewModels
                 return true;
             }
         }
+
     }
 }

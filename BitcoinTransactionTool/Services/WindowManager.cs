@@ -1,18 +1,17 @@
-﻿using System.Windows;
-
-using BitcoinTransactionTool.Views;
+﻿using BitcoinTransactionTool.Views;
 using CommonLibrary;
+using System.Windows;
 
 namespace BitcoinTransactionTool.Services
 {
     public interface IWindowManager
     {
-        void Show(BindableBase ViewModel);
+        void Show(InpcBase ViewModel);
     }
 
     public class TxEditWinManager : IWindowManager
     {
-        public void Show(BindableBase ViewModel)
+        public void Show(InpcBase ViewModel)
         {
             TransactionEditWindow myWin = new TransactionEditWindow();
             myWin.DataContext = ViewModel;
@@ -23,7 +22,7 @@ namespace BitcoinTransactionTool.Services
 
     public class QrWinManager : IWindowManager
     {
-        public void Show(BindableBase ViewModel)
+        public void Show(InpcBase ViewModel)
         {
             QrWindow myWin = new QrWindow();
             myWin.DataContext = ViewModel;
@@ -34,7 +33,7 @@ namespace BitcoinTransactionTool.Services
 
     public class TxJsonWinManager : IWindowManager
     {
-        public void Show(BindableBase ViewModel)
+        public void Show(InpcBase ViewModel)
         {
             TxJsonWindow myWin = new TxJsonWindow();
             myWin.DataContext = ViewModel;

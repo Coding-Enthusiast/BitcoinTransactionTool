@@ -1,13 +1,12 @@
-﻿using System;
-
-using BitcoinTransactionTool.Models;
+﻿using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
 using CommonLibrary;
 using Newtonsoft.Json;
+using System;
 
 namespace BitcoinTransactionTool.ViewModels
 {
-    public class TxJsonViewModel : BindableBase
+    public class TxJsonViewModel : InpcBase
     {
         public TxJsonViewModel()
         {
@@ -51,7 +50,7 @@ namespace BitcoinTransactionTool.ViewModels
         {
             try
             {
-                BitcoinTransaction btx = Transaction.DecodeRawTx(RawTx);
+                TxModel btx = TxService.DecodeRawTx(rawTx);
                 TxJson = JsonConvert.SerializeObject(btx, Formatting.Indented);
             }
             catch (Exception ex)
