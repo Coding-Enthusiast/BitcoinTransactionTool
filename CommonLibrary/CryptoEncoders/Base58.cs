@@ -158,6 +158,10 @@ namespace CommonLibrary.CryptoEncoders
             }
 
             byte[] data = DecodeWithoutValidation(b58EncodedStringWithCheckSum);
+            if (data.Length <= CheckSumSize)
+            {
+                throw new ArgumentException("Input is not a valid base-58 encoded string.");
+            }
             byte[] dataWithoutCheckSum = data.SubArray(0, data.Length - CheckSumSize);
             byte[] checkSum = data.SubArrayFromEnd(CheckSumSize);
             byte[] calculatedCheckSum = CalculateCheckSum(dataWithoutCheckSum);
