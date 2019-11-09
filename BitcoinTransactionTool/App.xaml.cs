@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Threading;
 
 namespace BitcoinTransactionTool
 {
@@ -13,5 +8,11 @@ namespace BitcoinTransactionTool
     /// </summary>
     public partial class App : Application
     {
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show($"An unhandled catastrophic exception was thrown:\n{e.Exception.Message}",
+                            "Handling Exception in App.xaml", MessageBoxButton.OK, MessageBoxImage.Warning);
+            e.Handled = true;
+        }
     }
 }
