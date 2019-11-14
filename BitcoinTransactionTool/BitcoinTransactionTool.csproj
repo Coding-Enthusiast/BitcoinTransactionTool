@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BitcoinTransactionTool</RootNamespace>
     <AssemblyName>BitcoinTransactionTool</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -23,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Bitcoin Icon.png.ico</ApplicationIcon>
@@ -49,6 +52,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,6 +75,56 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Backend\Address.cs" />
+    <Compile Include="Backend\Blockchain\ITransaction.cs" />
+    <Compile Include="Backend\Blockchain\Outpoint.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\IPubkeyScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\IRedeemScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\IScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\ISignatureScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\IWitnessScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\OP.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\ArithmeticOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\BaseOperation.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\CheckLocktimeVerifyOp.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\CheckSigOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\CryptoOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\EqualityOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\FlowControlOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\IOpData.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\IOperation.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\NotRunableOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\OpData.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\OpHelper.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\PushDataOp.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\ReturnOp.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\SimpleRunableOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\SizeOp.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\StackOps.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\VerifyOp.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\PubkeyScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\RedeemScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Script.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\ScriptTypeEnums.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\SignatureScript.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\WitnessScript.cs" />
+    <Compile Include="Backend\Blockchain\Transaction.cs" />
+    <Compile Include="Backend\Blockchain\TxIn.cs" />
+    <Compile Include="Backend\Blockchain\TxOut.cs" />
+    <Compile Include="Backend\CompactInt.cs" />
+    <Compile Include="Backend\Cryptography\Hashing\IHashFunction.cs" />
+    <Compile Include="Backend\Cryptography\Hashing\Ripemd160.cs" />
+    <Compile Include="Backend\Cryptography\Hashing\Ripemd160Sha256.cs" />
+    <Compile Include="Backend\Cryptography\Hashing\Sha1.cs" />
+    <Compile Include="Backend\Cryptography\Hashing\Sha256.cs" />
+    <Compile Include="Backend\Encoders\Base16.cs" />
+    <Compile Include="Backend\Encoders\Base43.cs" />
+    <Compile Include="Backend\Encoders\Base58.cs" />
+    <Compile Include="Backend\Encoders\Bech32.cs" />
+    <Compile Include="Backend\ExtentionsAndHelpers.cs" />
+    <Compile Include="Backend\IDeserializable.cs" />
+    <Compile Include="Backend\LockTime.cs" />
+    <Compile Include="Backend\StackInt.cs" />
     <Compile Include="Models\BitcoinAddress.cs" />
     <Compile Include="Models\OutPointModel.cs" />
     <Compile Include="Models\TxInModel.cs" />
@@ -84,7 +138,7 @@
     <Compile Include="Services\TransactionQR.cs" />
     <Compile Include="Services\TransactionServices\BlockchainInfo.cs" />
     <Compile Include="Services\TransactionServices\BlockCypher.cs" />
-    <Compile Include="Services\TxService.cs" />
+    <Compile Include="Services\TxBuilder.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
