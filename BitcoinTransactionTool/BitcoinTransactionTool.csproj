@@ -111,6 +111,7 @@
     <Compile Include="Backend\Blockchain\Transaction.cs" />
     <Compile Include="Backend\Blockchain\TxIn.cs" />
     <Compile Include="Backend\Blockchain\TxOut.cs" />
+    <Compile Include="Backend\JsonConverterHelper.cs" />
     <Compile Include="Backend\CompactInt.cs" />
     <Compile Include="Backend\Cryptography\Hashing\IHashFunction.cs" />
     <Compile Include="Backend\Cryptography\Hashing\Ripemd160.cs" />

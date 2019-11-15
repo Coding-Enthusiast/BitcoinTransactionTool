@@ -1,5 +1,11 @@
-﻿using BitcoinTransactionTool.Models;
-using BitcoinTransactionTool.Services;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using BitcoinTransactionTool.Backend;
+using BitcoinTransactionTool.Backend.Blockchain;
+using BitcoinTransactionTool.Backend.Encoders;
 using CommonLibrary;
 using Newtonsoft.Json;
 using System;
@@ -20,16 +26,16 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public string RawTx
         {
-            get { return rawTx; }
+            get { return _rawTx; }
             set
             {
-                if (SetField(ref rawTx, value))
+                if (SetField(ref _rawTx, value))
                 {
                     SetJson();
                 }
             }
         }
-        private string rawTx;
+        private string _rawTx;
 
 
         /// <summary>
@@ -37,25 +43,32 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public string TxJson
         {
-            get { return txJson; }
-            set { SetField(ref txJson, value); }
+            get { return _txJson; }
+            set { SetField(ref _txJson, value); }
         }
-        private string txJson;
+        private string _txJson;
 
 
-        /// <summary>
-        /// Converts Raw Transaction hex into a JSON string representation of the transaction.
-        /// </summary>
+
+        internal static JsonSerializerSettings jSetting = new JsonSerializerSettings
+        {
+            Converters = { new ByteArrayHexConverter(true), new TransactionLocktimeConverter(), new TransactionScriptConverter() },
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+        };
         private void SetJson()
         {
-            try
+            if (!Base16.IsValid(_rawTx))
             {
-                TxModel btx = TxService.DecodeRawTx(rawTx);
-                TxJson = JsonConvert.SerializeObject(btx, Formatting.Indented);
+                TxJson = "Invalid hex.";
             }
-            catch (Exception ex)
+            else
             {
-                TxJson = "Not a Valid Transaction hex" + Environment.NewLine + ex.ToString();
+                Transaction tx = new Transaction();
+                int offset = 0;
+
+                TxJson = tx.TryDeserialize(Base16.ToByteArray(_rawTx), ref offset, out string error)
+                    ? JsonConvert.SerializeObject(tx, Formatting.Indented, jSetting)
+                    : "Error while deserializing transaction:" + Environment.NewLine + error;
             }
         }
     }
