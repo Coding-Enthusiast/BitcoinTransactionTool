@@ -104,7 +104,22 @@ namespace BitcoinTransactionTool.Backend
             {
                 if (op is PushDataOp)
                 {
-                    sb.Append($"PushData<{((PushDataOp)op).data.ToBase16()}> ");
+                    if (((PushDataOp)op).data == null)
+                    {
+                        string opName = op.OpValue.ToString();
+                        if (opName.Contains('_'))
+                        {
+                            sb.Append($"OP{opName} ");
+                        }
+                        else
+                        {
+                            sb.Append($"OP_{opName} ");
+                        }                        
+                    }
+                    else
+                    {
+                        sb.Append($"PushData<{((PushDataOp)op).data.ToBase16()}> ");
+                    }
                 }
                 else if (op is ReturnOp)
                 {
