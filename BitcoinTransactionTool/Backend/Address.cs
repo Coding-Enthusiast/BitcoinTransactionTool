@@ -204,5 +204,26 @@ namespace BitcoinTransactionTool.Backend
             hash = null;
             return false;
         }
+
+        public string BuildP2PKH(byte[] data)
+        {
+            return b58Encoder.EncodeWithCheckSum(data.AppendToBeginning(versionByte_P2pkh_MainNet));
+        }
+
+        public string BuildP2SH(byte[] data)
+        {
+            return b58Encoder.EncodeWithCheckSum(data.AppendToBeginning(versionByte_P2sh_MainNet));
+        }
+
+        public string BuildP2WPKH(byte[] data)
+        {
+            return b32Encoder.Encode(data, 0, hrp_MainNet);
+        }
+
+        public string BuildP2WSH(byte[] data)
+        {
+            return b32Encoder.Encode(data, 0, hrp_MainNet);
+        }
+
     }
 }
