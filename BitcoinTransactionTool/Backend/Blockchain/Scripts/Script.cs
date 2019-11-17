@@ -434,7 +434,11 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                         opList.Add(new TUCKOp());
                         break;
 
-                    // OP_ (CAT SubStr LEFT RIGHT SIZE INVERT AND OR XOR) are moved to top
+                    // OP_ (CAT SubStr LEFT RIGHT INVERT AND OR XOR) are moved to top
+
+                    case OP.SIZE:
+                        opList.Add(new SizeOp());
+                        break;
 
                     case OP.EQUAL:
                         opList.Add(new EqualOp());
