@@ -1,11 +1,17 @@
-﻿using BitcoinTransactionTool.Models;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using BitcoinTransactionTool.Backend;
+using BitcoinTransactionTool.Backend.Blockchain;
+using BitcoinTransactionTool.Backend.Blockchain.Scripts;
+using BitcoinTransactionTool.Backend.Blockchain.Scripts.Operations;
+using BitcoinTransactionTool.Backend.Encoders;
+using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
 using CommonLibrary;
-using CommonLibrary.CryptoEncoders;
-using CommonLibrary.Extensions;
-using CommonLibrary.Transaction;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -34,91 +40,139 @@ namespace BitcoinTransactionTool.ViewModels
 
         public ObservableCollection<WalletType> WalletTypeList { get; set; }
 
-        private WalletType selectedWalletType;
+        private WalletType _selectedWalletType;
         public WalletType SelectedWalletType
         {
-            get { return selectedWalletType; }
-            set { SetField(ref selectedWalletType, value); }
+            get { return _selectedWalletType; }
+            set { SetField(ref _selectedWalletType, value); }
         }
 
-        private string rawTx;
+        private string _rawTx;
         public string RawTx
         {
-            get { return rawTx; }
-            set { SetField(ref rawTx, value); }
+            get { return _rawTx; }
+            set { SetField(ref _rawTx, value); }
         }
 
-        private string rawTx2;
+        private string _rawTx2;
         public string RawTx2
         {
-            get { return rawTx2; }
-            set { SetField(ref rawTx2, value); }
+            get { return _rawTx2; }
+            set { SetField(ref _rawTx2, value); }
         }
 
-        private TxModel trx;
-        public TxModel Trx
+
+        private string _txid;
+        public string TxId
         {
-            get { return trx; }
-            set { SetField(ref trx, value); }
+            get => _txid;
+            set => SetField(ref _txid, value);
+        }
+
+
+        private uint _ver;
+        public uint Version
+        {
+            get => _ver;
+            set => SetField(ref _ver, value);
+        }
+
+
+        private uint _lt;
+        public uint LockTime
+        {
+            get => _lt;
+            set => SetField(ref _lt, value);
+        }
+
+        private bool _rbf;
+        public bool IsRBF
+        {
+            get => _rbf;
+            set => SetField(ref _rbf, value);
         }
 
         private BindingList<ReceivingAddress> receiveList;
         public BindingList<ReceivingAddress> ReceiveList
         {
-            get { return receiveList ?? new BindingList<ReceivingAddress>(); }
-            set { SetField(ref receiveList, value); }
+            get => receiveList ?? new BindingList<ReceivingAddress>();
+            set => SetField(ref receiveList, value);
         }
         void ReceiveList_ListChanged(object sender, ListChangedEventArgs e)
         {
             MakeTxCommand.RaiseCanExecuteChanged();
         }
 
+        private ObservableCollection<UTXO> _utxoList;
+        public ObservableCollection<UTXO> UtxoList
+        {
+            get => _utxoList ?? new ObservableCollection<UTXO>();
+            set
+            {
+                if (SetField(ref _utxoList, value))
+                {
+                    MakeTxCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        private readonly TxBuilder txBuilder = new TxBuilder();
 
         public RelayCommand DecodeTxCommand { get; private set; }
         private void DecodeTx()
         {
-            try
+            Transaction tx = new Transaction();
+            byte[] data = Base16.ToByteArray(RawTx);
+            int offset = 0;
+            if (tx.TryDeserialize(data, ref offset, out string error))
             {
-                Trx = TxService.DecodeRawTx(rawTx);
-                ReceiveList = new BindingList<ReceivingAddress>(Trx.TxOutList.Select(x => new ReceivingAddress() { Address = x.PkScript, Payment = x.Amount }).ToArray());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+                TxId = tx.GetTransactionId();
+                Version = (uint)tx.Version;
+                LockTime = tx.LockTime;
+                IsRBF = tx.TxInList.Any(x => x.Sequence != uint.MaxValue); // TODO: this is inaccurate.
 
+                UtxoList = new ObservableCollection<UTXO>(tx.TxInList.Select(x => new UTXO(x.Outpoint.GetTxId(), x.Outpoint.Index)));
+
+                ReceiveList = new BindingList<ReceivingAddress>(tx.TxOutList.Select(x => new ReceivingAddress(GetAddr(x.PubScript), x.Amount)).ToList());
+            }
+            else
+            {
+                MessageBox.Show(error);
+            }
         }
-
+        private string GetAddr(IPubkeyScript scr)
+        {
+            Address addr = new Address();
+            switch (scr.GetPublicScriptType())
+            {
+                case PubkeyScriptType.P2PKH:
+                    return addr.BuildP2PKH(((PushDataOp)scr.OperationList[2]).data);
+                case PubkeyScriptType.P2SH:
+                    return addr.BuildP2SH(((PushDataOp)scr.OperationList[1]).data);
+                case PubkeyScriptType.P2WPKH:
+                    return addr.BuildP2WPKH(((PushDataOp)scr.OperationList[1]).data);
+                case PubkeyScriptType.P2WSH:
+                    return addr.BuildP2WSH(((PushDataOp)scr.OperationList[1]).data);
+                case PubkeyScriptType.Empty:
+                case PubkeyScriptType.Unknown:
+                case PubkeyScriptType.P2PK:
+                case PubkeyScriptType.P2MS:
+                case PubkeyScriptType.CheckLocktimeVerify:
+                case PubkeyScriptType.RETURN:
+                default:
+                    return "Undefined.";
+            }
+        }
 
         public RelayCommand MakeTxCommand { get; private set; }
         private void MakeTx()
         {
-            Transaction tx = new Transaction(
-                trx.Version,
-                trx.TxInCount,
-                trx.TxInList.Select(x => new TxIn()
-                {
-                    Outpoint = new Outpoint() { Index = x.Outpoint.Index, TxId = x.Outpoint.TxId },
-                    ScriptSig = x.ScriptSig,
-                    ScriptSigLength = new CompactInt(x.ScriptSigLength),
-                    Sequence = x.Sequence
-                }).ToArray(),
-                trx.TxOutCount,
-                trx.TxOutList.ToArray(),
-                trx.LockTime);
-
+            var tx = txBuilder.Build(Version, UtxoList.ToList(), ReceiveList.ToList(), LockTime);
             RawTx2 = tx.Serialize().ToBase16();
         }
         private bool CanMakeTx()
         {
-            if (Trx == null || ReceiveList.Select(x => x.HasErrors).Contains(true))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return UtxoList.Count != 0 && ReceiveList.Count != 0 && !ReceiveList.Select(x => x.HasErrors).Contains(true);
         }
 
     }

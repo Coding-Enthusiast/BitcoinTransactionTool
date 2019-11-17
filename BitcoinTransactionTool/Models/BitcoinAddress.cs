@@ -1,4 +1,9 @@
-﻿using CommonLibrary;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using CommonLibrary;
 
 namespace BitcoinTransactionTool.Models
 {
@@ -41,6 +46,20 @@ namespace BitcoinTransactionTool.Models
 
     public class ReceivingAddress : BitcoinAddress
     {
+        public ReceivingAddress() { }
+
+        public ReceivingAddress(string addr, decimal amount)
+        {
+            Address = addr;
+            Payment = amount;
+        }
+
+        public ReceivingAddress(string addr, ulong amount)
+        {
+            Address = addr;
+            Payment = amount * BitcoinConversions.Satoshi;
+        }
+
         /// <summary>
         /// PaymentSatoshi is the real payment value which is used in the code.
         /// </summary>

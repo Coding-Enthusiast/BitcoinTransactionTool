@@ -1,4 +1,10 @@
-﻿using BitcoinTransactionTool.Models;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using BitcoinTransactionTool.Backend;
+using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
 using CommonLibrary;
 using System;
@@ -19,7 +25,7 @@ namespace BitcoinTransactionTool.ViewModels
             ApiList = new ObservableCollection<TxApiNames>(Enum.GetValues(typeof(TxApiNames)).Cast<TxApiNames>().ToList());
 
             WalletTypeList = new ObservableCollection<WalletType>(Enum.GetValues(typeof(WalletType)).Cast<WalletType>().ToList());
-            txVersion = 1;
+            TxVersion = 1;
             SendAddressList = new BindingList<SendingAddress>();
             UtxoList = new BindingList<UTXO>();
             ReceiveList = new BindingList<ReceivingAddress>();
@@ -48,16 +54,16 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public bool IsReceiving
         {
-            get { return isReceiving; }
+            get => _isReceiving;
             set
             {
-                if (SetField(ref isReceiving, value))
+                if (SetField(ref _isReceiving, value))
                 {
                     GetUTXOCommand.RaiseCanExecuteChanged();
                 }
             }
         }
-        private bool isReceiving;
+        private bool _isReceiving;
 
         /// <summary>
         /// List of Api services used for receiving Unconfirmed Transaction Outputs (UTXO)
@@ -70,10 +76,10 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public TxApiNames SelectedApi
         {
-            get { return selectedApi; }
-            set { SetField(ref selectedApi, value); }
+            get => _selectedApi;
+            set { SetField(ref _selectedApi, value); }
         }
-        private TxApiNames selectedApi;
+        private TxApiNames _selectedApi;
 
 
         /// <summary>
@@ -87,17 +93,17 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public BindingList<UTXO> UtxoList
         {
-            get { return uTXOList; }
-            set { SetField(ref uTXOList, value); }
+            get => _uTXOList;
+            set { SetField(ref _uTXOList, value); }
         }
-        private BindingList<UTXO> uTXOList;
+        private BindingList<UTXO> _uTXOList;
 
 
-        private uint txVersion;
+        private uint _txVer;
         public uint TxVersion
         {
-            get { return txVersion; }
-            set { SetField(ref txVersion, value); }
+            get => _txVer;
+            set { SetField(ref _txVer, value); }
         }
 
 
@@ -106,10 +112,10 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public uint LockTime
         {
-            get { return lockTime; }
-            set { SetField(ref lockTime, value); }
+            get => _lt;
+            set { SetField(ref _lt, value); }
         }
-        private uint lockTime;
+        private uint _lt;
 
 
         /// <summary>
@@ -121,7 +127,7 @@ namespace BitcoinTransactionTool.ViewModels
             get
             {
                 //int size = Transaction.GetTransactionSize(SelectedUTXOs.Count, ReceiveList.Count);
-                int size = TxService.GetEstimatedTransactionSize(SelectedUTXOs.ToArray(), ReceiveList.ToArray());
+                int size = txBuilder.GetEstimatedTransactionSize(SelectedUTXOs.ToArray(), ReceiveList.ToArray());
                 return size;
             }
         }
@@ -130,70 +136,36 @@ namespace BitcoinTransactionTool.ViewModels
         /// <summary>
         /// Sum of Sending Addresses balances which shows the total available amount to spend.
         /// </summary>
-        public decimal TotalBalance
-        {
-            get
-            {
-                return SendAddressList.Sum(x => x.Balance);
-            }
-        }
+        public decimal TotalBalance => SendAddressList.Sum(x => x.Balance);
 
 
         /// <summary>
         /// Sum of selected UTXOs amounts, which is amount that is about to be spent.
         /// </summary>
         [DependsOnProperty(nameof(SelectedUTXOs))]
-        public decimal TotalSelectedBalance
-        {
-            get
-            {
-                return SelectedUTXOs.Sum(x => x.AmountBitcoin);
-            }
-        }
+        public decimal TotalSelectedBalance => SelectedUTXOs.Sum(x => x.AmountBitcoin);
 
 
         /// <summary>
         /// Total amount which is being sent to all the Receiving Addresses.
         /// </summary>
         [DependsOnProperty(nameof(ReceiveList))]
-        public decimal TotalToSend
-        {
-            get
-            {
-                return ReceiveList.Sum(x => x.Payment);
-            }
-        }
+        public decimal TotalToSend => ReceiveList.Sum(x => x.Payment);
 
 
         /// <summary>
         /// Amount of fee which is being paid (Must be >= 0).
         /// </summary>
         [DependsOnProperty(nameof(TotalSelectedBalance), nameof(TotalToSend))]
-        public decimal Fee
-        {
-            get
-            {
-                return TotalSelectedBalance - TotalToSend;
-            }
-        }
+        public decimal Fee => TotalSelectedBalance - TotalToSend;
 
 
         /// <summary>
         /// Amount of fee in satoshi per byte based on estimated transaction size and fee amount.
         /// </summary>
         [DependsOnProperty(nameof(TransactionSize), nameof(Fee))]
-        public string FeePerByte
-        {
-            get
-            {
-                int size = 0;
-                if (TransactionSize != 0)
-                {
-                    size = (int)(Fee / BitcoinConversions.Satoshi) / TransactionSize;
-                }
-                return string.Format($"{size} satoshi/byte");
-            }
-        }
+        public string FeePerByte => 
+            string.Format($"{((TransactionSize == 0) ? 0 : ((int)(Fee / BitcoinConversions.Satoshi) / TransactionSize))} satoshi/byte");
 
 
         /// <summary>
@@ -201,16 +173,16 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public ObservableCollection<UTXO> SelectedUTXOs
         {
-            get { return selectedUTXOs; }
+            get => _selectedUTXOs;
             set
             {
-                if (SetField(ref selectedUTXOs, value))
+                if (SetField(ref _selectedUTXOs, value))
                 {
                     MakeTxCommand.RaiseCanExecuteChanged();
                 }
             }
         }
-        private ObservableCollection<UTXO> selectedUTXOs;
+        private ObservableCollection<UTXO> _selectedUTXOs;
 
 
         /// <summary>
@@ -233,24 +205,24 @@ namespace BitcoinTransactionTool.ViewModels
         /// </summary>
         public ObservableCollection<WalletType> WalletTypeList { get; set; }
 
-        private WalletType selectedWalletType;
+        private WalletType _selectedWalletType;
         public WalletType SelectedWalletType
         {
-            get { return selectedWalletType; }
-            set { SetField(ref selectedWalletType, value); }
+            get => _selectedWalletType;
+            set => SetField(ref _selectedWalletType, value);
         }
 
 
         /// <summary>
         /// Raw Unsigned Transaction result.
         /// </summary>
-        private string rawTx;
+        private string _rawTx;
         public string RawTx
         {
-            get { return rawTx; }
+            get => _rawTx;
             set
             {
-                if (SetField(ref rawTx, value))
+                if (SetField(ref _rawTx, value))
                 {
                     CopyTxCommand.RaiseCanExecuteChanged();
                     ShowQrWindowCommand.RaiseCanExecuteChanged();
@@ -264,6 +236,7 @@ namespace BitcoinTransactionTool.ViewModels
         /// An instance of the IWindowManager to show new views.
         /// </summary>
         private IWindowManager winManager;
+        private readonly TxBuilder txBuilder = new TxBuilder();
 
         #endregion
 
@@ -295,12 +268,10 @@ namespace BitcoinTransactionTool.ViewModels
             TransactionApi api;
             switch (SelectedApi)
             {
-                case TxApiNames.BlockchainInfo:
-                    api = new Services.TransactionServices.BlockchainInfo();
-                    break;
                 case TxApiNames.BlockCypher:
                     api = new Services.TransactionServices.BlockCypher();
                     break;
+                case TxApiNames.BlockchainInfo:
                 default:
                     api = new Services.TransactionServices.BlockchainInfo();
                     break;
@@ -335,8 +306,9 @@ namespace BitcoinTransactionTool.ViewModels
         {
             // param is of type System.Windows.Controls.SelectedItemCollection
             IList utxo = (IList)param;
-            //RawTx = Transaction.CreateRawTx(utxo.Cast<UTXO>().ToList(), ReceiveList.ToList(), LockTime, SelectedWalletType);
-            RawTx = TxService.CreateRawTx(TxVersion, utxo.Cast<UTXO>().ToList(), ReceiveList.ToList(), LockTime, SelectedWalletType);
+
+            var tx = txBuilder.Build(TxVersion, utxo.Cast<UTXO>().ToList(), ReceiveList.ToList(), LockTime);
+            RawTx = tx.Serialize().ToBase16();
         }
         private bool CanMakeTx()
         {

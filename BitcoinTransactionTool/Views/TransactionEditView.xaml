@@ -6,40 +6,64 @@
              xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
              mc:Ignorable="d" Width="626" FontSize="14" Height="444">
     <Grid>
-        <TextBox Text="{Binding RawTx, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="59" Margin="10,43,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-        <Button Content="Decode Tx" HorizontalAlignment="Left" Margin="537,43,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DecodeTxCommand, Mode=OneWay}" Height="59"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
+            <Label Content="Tx Id:" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+            <TextBox Text="{Binding TxId}" TextWrapping="Wrap" Width="555"/>
+        </StackPanel>
 
-        <Label Content="Tx Id:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding BTx.TxId}"  HorizontalAlignment="Left" Height="26" Margin="71,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="461"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+            <TextBox Text="{Binding RawTx}" TextWrapping="Wrap" Width="540" Height="59" VerticalScrollBarVisibility="Visible"/>
+            <Button Content="Decode Tx" Command="{Binding DecodeTxCommand, Mode=OneWay}" Width="75" Height="59"/>
+        </StackPanel>
 
-        <Label Content="Version:" HorizontalAlignment="Left" Margin="10,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding Trx.Version, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="50" HorizontalAlignment="Left" Margin="81,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="5">
+            <Label Content="Version:" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+            <TextBox Text="{Binding Version}" Height="25" Width="50"/>
 
-        <Label Content="Tx Status:" HorizontalAlignment="Left" Margin="142,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding Trx.Status}" Height="25" Width="70" HorizontalAlignment="Left" Margin="232,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
+            <Label Content="Lock Time:" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+            <TextBox Text="{Binding LockTime}" Height="25" Width="70"/>
 
-        <Label Content="Lock Time:" HorizontalAlignment="Left" Margin="313,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding Trx.LockTime, UpdateSourceTrigger=PropertyChanged}" Height="25" Width="70" HorizontalAlignment="Left" Margin="402,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+            <Label Content="RBF:" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+            <TextBox Text="{Binding IsRBF, Mode=OneWay}" Height="25" Width="70" IsReadOnly="True"/>
+        </StackPanel>
 
-        <Label Content="RBF:" HorizontalAlignment="Left" Margin="490,104,0,0" VerticalAlignment="Top" FontFamily="Comic Sans MS" FontWeight="Bold"/>
-        <TextBox Text="{Binding Trx.IsRbf, Mode=OneWay}" Height="25" Width="70" HorizontalAlignment="Left" Margin="537,107,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsReadOnly="True" />
-
-        <DataGrid HorizontalAlignment="Left" Margin="10,153,0,0" VerticalAlignment="Top" Height="104" Width="602" ItemsSource="{Binding Trx.TxInList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible">
+        <DataGrid Height="104" Width="602" ItemsSource="{Binding UtxoList}" AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" Grid.Row="3">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="TxId" Width="485" Binding="{Binding Outpoint.TxId}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Sequence" Width="90" Binding="{Binding Sequence}"/>
+                <DataGridTextColumn Header="TxId" Width="485" Binding="{Binding TxHash}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Sequence" Width="90" Binding="{Binding OutIndex}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox Text="{Binding RawTx2}"  HorizontalAlignment="Left" Height="59" Margin="10,371,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="522" VerticalScrollBarVisibility="Visible"/>
-        <DataGrid HorizontalAlignment="Left" Margin="10,262,0,0" VerticalAlignment="Top" Height="104" Width="602" ItemsSource="{Binding ReceiveList, Mode=TwoWay}" AutoGenerateColumns="False">
+
+        <DataGrid ItemsSource="{Binding ReceiveList, Mode=TwoWay}" AutoGenerateColumns="False" Height="104" Width="602" Grid.Row="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Receiving Address" Width="485" Binding="{Binding Address, Mode=TwoWay}"/>
                 <DataGridTextColumn Header="Payment" Width="90" Binding="{Binding Payment, Mode=TwoWay, StringFormat=\{0:F8\}}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Make Tx" Command="{Binding MakeTxCommand, Mode=OneWay}" HorizontalAlignment="Left" Margin="537,405,0,0" VerticalAlignment="Top" Width="75"/>
-        <ComboBox HorizontalAlignment="Left" Margin="537,371,0,0" VerticalAlignment="Top" Width="75" ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}"/>
+
+        <Grid Margin="5" Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBox Text="{Binding RawTx2}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" Height="60" Grid.Column="0" Grid.RowSpan="2"/>
+            <ComboBox ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}" Margin="3" Grid.Column="1" Grid.Row="0"/>
+            <Button Content="Make Tx" Command="{Binding MakeTxCommand, Mode=OneWay}" Margin="3" Grid.Column="1" Grid.Row="1"/>
+        </Grid>
 
     </Grid>
 </UserControl>
