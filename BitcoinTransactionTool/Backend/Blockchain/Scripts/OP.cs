@@ -13,10 +13,10 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
         /// Push an emtpy array of bytes onto the stack.
         /// </summary>
         _0 = 0x00,
-        /// <summary>
-        /// Same value as <see cref="_0"/> and same action (push empty array of bytes onto the stack)
-        /// </summary>
-        FALSE = _0,
+        ///// <summary>
+        ///// Same value as <see cref="_0"/> and same action (push empty array of bytes onto the stack)
+        ///// </summary>
+        //FALSE = _0,
 
         /* From 0x01 to 0x4b don't have names. They indicate size of the following data to be pushed. */
 
@@ -44,10 +44,10 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
         /// Push number 1
         /// </summary>
         _1 = 0x51,
-        /// <summary>
-        /// Same value as <see cref="_1"/> and same action (push number 1)
-        /// </summary>
-        TRUE = _1,
+        ///// <summary>
+        ///// Same value as <see cref="_1"/> and same action (push number 1)
+        ///// </summary>
+        //TRUE = _1,
         /// <summary>
         /// Push number 2
         /// </summary>
@@ -499,19 +499,19 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
         /// Marks transaction as invalid if the top stack item is greater than the transaction's nLockTime field
         /// </summary>
         CheckLocktimeVerify = 0xb1,
-        /// <summary>
-        /// Same as: <see cref="CheckLocktimeVerify"/>
-        /// </summary>
-        NOP2 = CheckLocktimeVerify,
+        ///// <summary>
+        ///// Same as: <see cref="CheckLocktimeVerify"/>
+        ///// </summary>
+        //NOP2 = CheckLocktimeVerify,
         /// <summary>
         /// Marks transaction as invalid if the relative lock time of the input is 
         /// not equal to or longer than the value of the top stack item.
         /// </summary>
         CheckSequenceVerify = 0xb2,
-        /// <summary>
-        /// Same as: <see cref="CheckSequenceVerify"/>.
-        /// </summary>
-        NOP3 = CheckSequenceVerify,
+        ///// <summary>
+        ///// Same as: <see cref="CheckSequenceVerify"/>.
+        ///// </summary>
+        //NOP3 = CheckSequenceVerify,
         /// <summary>
         /// OP is ignored.
         /// </summary>
