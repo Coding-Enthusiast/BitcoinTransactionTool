@@ -5,21 +5,16 @@
 
 using System.Windows;
 
-namespace BitcoinTransactionTool
+namespace BitcoinTransactionTool.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ScriptWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ScriptWindow : Window
     {
-        public MainWindow()
+        public ScriptWindow()
         {
             InitializeComponent();
-        }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }

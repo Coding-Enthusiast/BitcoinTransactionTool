@@ -17,11 +17,13 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="F2" Command="{Binding ShowEditWindowCommand}"/>
+        <KeyBinding Key="F3" Command="{Binding ShowScriptWindowCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Menu VerticalAlignment="Top" FontSize="14">
             <MenuItem Header="_Tools">
                 <MenuItem Header="Edit Transactions" InputGestureText="F2" Command="{Binding ShowEditWindowCommand, Mode=OneWay}"/>
+                <MenuItem Header="Script builder" InputGestureText="F3" Command="{Binding ShowScriptWindowCommand, Mode=OneWay}"/>
                 <Separator />
                 <MenuItem Header="_Exit" Click="Exit_Click" InputGestureText="Alt+F4"/>
             </MenuItem>

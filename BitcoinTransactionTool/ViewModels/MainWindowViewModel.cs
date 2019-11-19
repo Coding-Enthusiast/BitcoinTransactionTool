@@ -377,6 +377,15 @@ namespace BitcoinTransactionTool.ViewModels
             winManager.Show(vm);
         }
 
+
+        public RelayCommand ShowScriptWindowCommand => new RelayCommand(ShowScriptWindow);
+        private void ShowScriptWindow()
+        {
+            ScriptWindowViewModel vm = new ScriptWindowViewModel();
+            winManager = new ScriptWinManager();
+            winManager.Show(vm);
+        }
+
         #endregion
     }
 }

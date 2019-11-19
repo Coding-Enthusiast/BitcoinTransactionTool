@@ -1,4 +1,9 @@
-﻿using BitcoinTransactionTool.Views;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using BitcoinTransactionTool.Views;
 using CommonLibrary;
 using System.Windows;
 
@@ -36,6 +41,17 @@ namespace BitcoinTransactionTool.Services
         public void Show(InpcBase ViewModel)
         {
             TxJsonWindow myWin = new TxJsonWindow();
+            myWin.DataContext = ViewModel;
+            myWin.Owner = Application.Current.MainWindow;
+            myWin.ShowDialog();
+        }
+    }
+
+    public class ScriptWinManager : IWindowManager
+    {
+        public void Show(InpcBase ViewModel)
+        {
+            ScriptWindow myWin = new ScriptWindow();
             myWin.DataContext = ViewModel;
             myWin.Owner = Application.Current.MainWindow;
             myWin.ShowDialog();

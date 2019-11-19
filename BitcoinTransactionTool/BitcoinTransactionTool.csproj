@@ -127,6 +127,7 @@
     <Compile Include="Backend\LockTime.cs" />
     <Compile Include="Backend\StackInt.cs" />
     <Compile Include="Models\BitcoinAddress.cs" />
+    <Compile Include="Models\ButtonModel.cs" />
     <Compile Include="Models\OutPointModel.cs" />
     <Compile Include="Models\TxInModel.cs" />
     <Compile Include="Models\TxModel.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
+    <Compile Include="ViewModels\ScriptWindowViewModel.cs" />
     <Compile Include="ViewModels\TransactionEditViewModel.cs" />
     <Compile Include="ViewModels\TxJsonViewModel.cs" />
     <Compile Include="Views\QrView.xaml.cs">
@@ -150,6 +152,9 @@
     </Compile>
     <Compile Include="Views\QrWindow.xaml.cs">
       <DependentUpon>QrWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScriptWindow.xaml.cs">
+      <DependentUpon>ScriptWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TransactionEditView.xaml.cs">
       <DependentUpon>TransactionEditView.xaml</DependentUpon>
@@ -177,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\QrWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScriptWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
