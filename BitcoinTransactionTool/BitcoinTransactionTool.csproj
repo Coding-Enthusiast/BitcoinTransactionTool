@@ -128,9 +128,6 @@
     <Compile Include="Backend\StackInt.cs" />
     <Compile Include="Models\BitcoinAddress.cs" />
     <Compile Include="Models\ButtonModel.cs" />
-    <Compile Include="Models\OutPointModel.cs" />
-    <Compile Include="Models\TxInModel.cs" />
-    <Compile Include="Models\TxModel.cs" />
     <Compile Include="Models\UTXO.cs" />
     <Compile Include="Services\Api.cs" />
     <Compile Include="Services\ErrorCollection.cs" />
