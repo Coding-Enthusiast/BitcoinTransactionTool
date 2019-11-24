@@ -32,7 +32,7 @@ namespace BitcoinTransactionTool.ViewModels
 
             // Initializing Commands.
             GetUTXOCommand = new RelayCommand(GetUTXO, () => !IsReceiving);
-            MakeTxCommand = new BindableCommand(MakeTx, CanMakeTx);
+            MakeTxCommand = new RelayCommand(MakeTx, CanMakeTx);
             CopyTxCommand = new RelayCommand(CopyTx, () => !string.IsNullOrEmpty(RawTx));
             ShowQrWindowCommand = new RelayCommand(ShowQrWindow, () => !string.IsNullOrEmpty(RawTx));
             ShowJsonWindowCommand = new RelayCommand(ShowJsonWindow, () => !string.IsNullOrEmpty(RawTx));
@@ -301,13 +301,10 @@ namespace BitcoinTransactionTool.ViewModels
         /// <summary>
         /// Creates the Raw Unsigned Transaction.
         /// </summary>
-        public BindableCommand MakeTxCommand { get; private set; }
-        private void MakeTx(object param)
+        public RelayCommand MakeTxCommand { get; private set; }
+        private void MakeTx()
         {
-            // param is of type System.Windows.Controls.SelectedItemCollection
-            IList utxo = (IList)param;
-
-            var tx = txBuilder.Build(TxVersion, utxo.Cast<UTXO>().ToList(), ReceiveList.ToList(), LockTime);
+            var tx = txBuilder.Build(TxVersion, SelectedUTXOs.Cast<UTXO>().ToList(), ReceiveList.ToList(), LockTime);
             RawTx = tx.Serialize().ToBase16();
         }
         private bool CanMakeTx()
