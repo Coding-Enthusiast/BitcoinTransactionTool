@@ -3,110 +3,60 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
+using System.ComponentModel;
+
 namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 {
     public enum OP : byte
     {
         # region  Constants 
 
-        /// <summary>
-        /// Push an emtpy array of bytes onto the stack.
-        /// </summary>
+        [Description("Push an emtpy array of bytes onto the stack.")]
         _0 = 0x00,
-        ///// <summary>
-        ///// Same value as <see cref="_0"/> and same action (push empty array of bytes onto the stack)
-        ///// </summary>
-        //FALSE = _0,
 
         /* From 0x01 to 0x4b don't have names. They indicate size of the following data to be pushed. */
 
-        /// <summary>
-        /// Next 1 byte indicates size of the data to be pushed.
-        /// </summary>
+        [Description("Next 1 byte indicates size of the data to be pushed.")]
         PushData1 = 0x4c,
-        /// <summary>
-        /// Next 2 bytes indicate size of the data to be pushed.
-        /// </summary>
+        [Description("Next 2 bytes indicate size of the data to be pushed.")]
         PushData2 = 0x4d,
-        /// <summary>
-        /// Next 4 bytes indicate size of the data to be pushed.
-        /// </summary>
+        [Description("Next 4 bytes indicate size of the data to be pushed.")]
         PushData4 = 0x4e,
-        /// <summary>
-        /// Push number -1
-        /// </summary>
+        [Description("Push number -1")]
         Negative1 = 0x4f,
-        /// <summary>
-        /// Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch")]
         Reserved = 0x50,
-        /// <summary>
-        /// Push number 1
-        /// </summary>
+        [Description("Push number 1")]
         _1 = 0x51,
-        ///// <summary>
-        ///// Same value as <see cref="_1"/> and same action (push number 1)
-        ///// </summary>
-        //TRUE = _1,
-        /// <summary>
-        /// Push number 2
-        /// </summary>
+        [Description("Push number 2")]
         _2 = 0x52,
-        /// <summary>
-        /// Push number 3
-        /// </summary>
+        [Description("Push number 3")]
         _3 = 0x53,
-        /// <summary>
-        /// Push number 4
-        /// </summary>
+        [Description("Push number 4")]
         _4 = 0x54,
-        /// <summary>
-        /// Push number 5
-        /// </summary>
+        [Description("Push number 5")]
         _5 = 0x55,
-        /// <summary>
-        /// Push number 6
-        /// </summary>
+        [Description("Push number 6")]
         _6 = 0x56,
-        /// <summary>
-        /// Push number 7
-        /// </summary>
+        [Description("Push number 7")]
         _7 = 0x57,
-        /// <summary>
-        /// Push number 8
-        /// </summary>
+        [Description("Push number 8")]
         _8 = 0x58,
-        /// <summary>
-        /// Push number 9
-        /// </summary>
+        [Description("Push number 9")]
         _9 = 0x59,
-        /// <summary>
-        /// Push number 10
-        /// </summary>
+        [Description("Push number 10")]
         _10 = 0x5a,
-        /// <summary>
-        /// Push number 11
-        /// </summary>
+        [Description("Push number 11")]
         _11 = 0x5b,
-        /// <summary>
-        /// Push number 12
-        /// </summary>
+        [Description("Push number 12")]
         _12 = 0x5c,
-        /// <summary>
-        /// Push number 13
-        /// </summary>
+        [Description("Push number 13")]
         _13 = 0x5d,
-        /// <summary>
-        /// Push number 14
-        /// </summary>
+        [Description("Push number 14")]
         _14 = 0x5e,
-        /// <summary>
-        /// Push number 15
-        /// </summary>
+        [Description("Push number 15")]
         _15 = 0x5f,
-        /// <summary>
-        /// Push number 16
-        /// </summary>
+        [Description("Push number 16")]
         _16 = 0x60,
 
         #endregion
@@ -115,54 +65,25 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
         #region Flow control
 
-        /// <summary>
-        /// Does nothing!
-        /// </summary>
+        [Description("Does nothing!")]
         NOP = 0x61,
-        /// <summary>
-        /// Transaction is invalid unless occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Transaction is invalid unless occuring in an unexecuted OP_IF branch")]
         VER = 0x62,
-        /// <summary>
-        /// Marks the beginning of a conditional statement. 
-        /// Removes the top stack item, if the value is True, the statements are executed.
-        /// <para/>Format (must end with <see cref="EndIf"/>): [expression] if [statements] [else [statements]]* endif
-        /// </summary>
+        [Description("Marks the beginning of a conditional statement.\nRemoves the top stack item, if the value is True, the statements are executed.\nFormat (must end with EndIf): [expression] if [statements] [else [statements]]* endif")]
         IF = 0x63,
-        /// <summary>
-        /// Marks the beginning of a conditional statement. 
-        /// Removes the top stack item, if the value is False, the statements are executed.
-        /// <para/>Format (must end with <see cref="EndIf"/>): [expression] notif [statements] [else [statements]]* endif
-        /// </summary>
+        [Description("Marks the beginning of a conditional statement.\nRemoves the top stack item, if the value is False, the statements are executed.\nFormat (must end with EndIf): [expression] notif [statements] [else [statements]]* endif")]
         NotIf = 0x64,
-        /// <summary>
-        /// Transaction is invalid even when occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Transaction is invalid even when occuring in an unexecuted OP_IF branch")]
         VerIf = 0x65,
-        /// <summary>
-        /// Transaction is invalid even when occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Transaction is invalid even when occuring in an unexecuted OP_IF branch")]
         VerNotIf = 0x66,
-        /// <summary>
-        /// Marks the "else" part of the conditional statement. Can only exist after an <see cref="IF"/> or <see cref="NotIf"/>.
-        /// The statements will only be executed if the preceding statements weren't executed.
-        /// <para/>Format: [expression] if [statements] [else [statements]]* endif
-        /// </summary>
+        [Description("Marks the 'else' part of the conditional statement. Can only exist after an OP_IF or OP_NotIf.\nThe statements will only be executed if the preceding statements weren't executed.\nFormat: [expression] if [statements] [else [statements]]* endif")]
         ELSE = 0x67,
-        /// <summary>
-        /// Marks end of a conditional block. All blocks must end or the script is invalid. 
-        /// It also can't exist without a prior <see cref="IF"/> or <see cref="NotIf"/>.
-        /// <para/>Format: [expression] if [statements] [else [statements]]* endif
-        /// </summary>
+        [Description("Marks end of a conditional block. All blocks must end or the script is invalid.\nIt also can't exist without a prior OP_IF or OP_NotIf\nFormat: [expression] if [statements] [else [statements]]* endif")]
         EndIf = 0x68,
-        /// <summary>
-        /// Removes the top stack item and fails if it was False.
-        /// </summary>
+        [Description("Removes the top stack item and fails if it was False.")]
         VERIFY = 0x69,
-        /// <summary>
-        /// Creates an unspendable output. Used for attaching extra data to transactions. 
-        /// (it should start with a pushdata OP after <see cref="RETURN"/>).
-        /// </summary>
+        [Description("Creates an unspendable output. Used for attaching extra data to transactions.\n(it should start with a pushdata OP after OP_RETURN)")]
         RETURN = 0x6a,
 
         #endregion
@@ -170,92 +91,43 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
 
         #region Stack
-
-        /// <summary>
-        /// Removes one item from stack and puts it on top of alt-stack.
-        /// </summary>
+        [Description("Removes one item from stack and puts it on top of alt-stack.")]
         ToAltStack = 0x6b,
-        /// <summary>
-        /// Removes one item from alt-stack and puts it on top of stack.
-        /// </summary>
+        [Description("Removes one item from alt-stack and puts it on top of stack.")]
         FromAltStack = 0x6c,
-        /// <summary>
-        /// Removes the top two stack items.
-        /// </summary>
+        [Description("Removes the top two stack items.")]
         DROP2 = 0x6d,
-        /// <summary>
-        /// Duplicates the top 2 stack items.
-        /// </summary>
+        [Description("Duplicates the top 2 stack items.")]
         DUP2 = 0x6e,
-        /// <summary>
-        /// Duplicates the top 3 stack items.
-        /// </summary>
+        [Description("Duplicates the top 3 stack items.")]
         DUP3 = 0x6f,
-        /// <summary>
-        /// Copies the pair of items two spaces back in the stack to the front.
-        /// <para/> Example: x1 x2 x3 x4 -> x1 x2 x3 x4 x1 x2
-        /// </summary>
+        [Description("Copies the pair of items two spaces back in the stack to the front.\nExample: x1 x2 x3 x4 -> x1 x2 x3 x4 x1 x2")]
         OVER2 = 0x70,
-        /// <summary>
-        /// The fifth and sixth items back are moved to the top of the stack.
-        /// <para/> Example: x1 x2 x3 x4 x5 x6 -> x3 x4 x5 x6 x1 x2
-        /// </summary>
+        [Description("The fifth and sixth items back are moved to the top of the stack.\nExample: x1 x2 x3 x4 x5 x6 -> x3 x4 x5 x6 x1 x2")]
         ROT2 = 0x71,
-        /// <summary>
-        /// Swaps the top two pairs of items.
-        /// <para/> Example: x1 x2 x3 x4 -> x3 x4 x1 x2
-        /// </summary>
+        [Description("Swaps the top two pairs of items.\nExample: x1 x2 x3 x4 -> x3 x4 x1 x2")]
         SWAP2 = 0x72,
-        /// <summary>
-        /// Duplicates top stack item if its value is not 0.
-        /// </summary>
+        [Description("Duplicates top stack item if its value is not 0.")]
         IfDup = 0x73,
-        /// <summary>
-        /// Puts the number of stack items onto the stack.
-        /// </summary>
+        [Description("Puts the number of stack items onto the stack.")]
         DEPTH = 0x74,
-        /// <summary>
-        /// Removes the top stack item.
-        /// </summary>
+        [Description("Removes the top stack item.")]
         DROP = 0x75,
-        /// <summary>
-        /// Duplicates the top stack item.
-        /// </summary>
+        [Description("Duplicates the top stack item.")]
         DUP = 0x76,
-        /// <summary>
-        /// Removes the second item from top of stack.
-        /// <para/> Example: x1 x2 -> x2
-        /// </summary>
+        [Description("Removes the second item from top of stack.\nExample: x1 x2 -> x2")]
         NIP = 0x77,
-        /// <summary>
-        /// Copies the second item from top of the stack to the top.
-        /// <para/> Example: x1 x2 -> x1 x2 x1
-        /// </summary>
+        [Description("Copies the second item from top of the stack to the top.\nExample: x1 x2 -> x1 x2 x1")]
         OVER = 0x78,
-        /// <summary>
-        /// The item n back in the stack is "copied" to the top.
-        /// <para/> Example: xn ... x2 x1 x0 -> xn ... x2 x1 x0 xn
-        /// </summary>
+        [Description("The item n back in the stack is 'copied' to the top.\nExample: xn ... x2 x1 x0 -> xn ... x2 x1 x0 xn")]
         PICK = 0x79,
-        /// <summary>
-        /// The item n back in the stack is "moved" to the top.
-        /// <para/> Example: xn x(n-1) ... x2 x1 x0 -> x(n-1) ... x2 x1 x0 xn
-        /// </summary>
+        [Description("The item n back in the stack is 'moved' to the top.\nExample: xn x(n-1) ... x2 x1 x0 -> x(n-1) ... x2 x1 x0 xn")]
         ROLL = 0x7a,
-        /// <summary>
-        /// The top three items on the stack are rotated to the left.
-        /// <para/> Example: x1 x2 x3 -> x2 x3 x1
-        /// </summary>
+        [Description("The top three items on the stack are rotated to the left.\nExample: x1 x2 x3 -> x2 x3 x1")]
         ROT = 0x7b,
-        /// <summary>
-        /// The top two items on the stack are swapped.
-        /// <para/> Example: x1 x2 -> x2 x1
-        /// </summary>
+        [Description("The top two items on the stack are swapped.\nExample: x1 x2 -> x2 x1")]
         SWAP = 0x7c,
-        /// <summary>
-        /// The item at the top of the stack is copied and inserted before the second-to-top item.
-        /// <para/> Example: x1 x2 -> x2 x1 x2
-        /// </summary>
+        [Description("The item at the top of the stack is copied and inserted before the second-to-top item.\nExample: x1 x2 -> x2 x1 x2")]
         TUCK = 0x7d,
 
         #endregion
@@ -263,25 +135,16 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
 
         #region Splice
-        /// <summary>
-        /// [Disabled] Concatenates two strings.
-        /// </summary>
+
+        [Description("[Disabled] Concatenates two strings.")]
         CAT = 0x7e,
-        /// <summary>
-        /// [Disabled] Returns a section of a string.
-        /// </summary>
+        [Description("[Disabled] Returns a section of a string.")]
         SubStr = 0x7f,
-        /// <summary>
-        /// [Disabled] Keeps only characters left of the specified point in a string.
-        /// </summary>
+        [Description("[Disabled] Keeps only characters left of the specified point in a string.")]
         LEFT = 0x80,
-        /// <summary>
-        /// [Disabled] Keeps only characters right of the specified point in a string.
-        /// </summary>
+        [Description("[Disabled] Keeps only characters right of the specified point in a string.")]
         RIGHT = 0x81,
-        /// <summary>
-        /// Pushes the string length of the top element of the stack (without popping it).
-        /// </summary>
+        [Description("Pushes the string length of the top element of the stack (without popping it).")]
         SIZE = 0x82,
 
         #endregion
@@ -290,38 +153,22 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
         #region Bitwise logic
 
-        /// <summary>
-        /// [Disabled] Flips all of the bits in the input.
-        /// </summary>
+
+        [Description("[Disabled] Flips all of the bits in the input.")]
         INVERT = 0x83,
-        /// <summary>
-        /// [Disabled] Boolean and between each bit in the inputs.
-        /// </summary>
+        [Description("[Disabled] Boolean and between each bit in the inputs.")]
         AND = 0x84,
-        /// <summary>
-        /// [Disabled] Boolean or between each bit in the inputs.
-        /// </summary>
+        [Description("[Disabled] Boolean or between each bit in the inputs.")]
         OR = 0x85,
-        /// <summary>
-        /// [Disabled] Boolean exclusive or between each bit in the inputs. 
-        /// </summary>
+        [Description("[Disabled] Boolean exclusive or between each bit in the inputs.")]
         XOR = 0x86,
-        /// <summary>
-        /// Pops two top stack items, compares them and pushes the equality result onto the stack. 
-        /// 1 if the inputs are exactly equal, 0 otherwise.
-        /// </summary>
+        [Description("Pops two top stack items, compares them and pushes the equality result onto the stack.\n1 if the inputs are exactly equal, 0 otherwise.")]
         EQUAL = 0x87,
-        /// <summary>
-        /// Runs both <see cref="EQUAL"/> then <see cref="VERIFY"/> respectively.
-        /// </summary>
+        [Description("Runs both OP_EQUAL then OP_VERIFY respectively.")]
         EqualVerify = 0x88,
-        /// <summary>
-        /// Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch")]
         Reserved1 = 0x89,
-        /// <summary>
-        /// Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch
-        /// </summary>
+        [Description("Reserved OP code. Transaction is invalid unless occuring in an unexecuted OP_IF branch")]
         Reserved2 = 0x8a,
 
         #endregion
@@ -329,113 +176,60 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
 
         #region Arithmetic
-        /// <summary>
-        /// 1 is added to the input.
-        /// </summary>
+
+        [Description("1 is added to the input.")]
         ADD1 = 0x8b,
-        /// <summary>
-        /// 1 is subtracted from the input.
-        /// </summary>
+        [Description("1 is subtracted from the input.")]
         SUB1 = 0x8c,
-        /// <summary>
-        /// [Disabled] The input is multiplied by 2.
-        /// </summary>
+        [Description("[Disabled] The input is multiplied by 2.")]
         MUL2 = 0x8d,
-        /// <summary>
-        /// [Disabled] The input is divided by 2.
-        /// </summary>
+        [Description("[Disabled] The input is divided by 2.")]
         DIV2 = 0x8e,
-        /// <summary>
-        /// The sign of the input is flipped.
-        /// </summary>
+        [Description("The sign of the input is flipped.")]
         NEGATE = 0x8f,
-        /// <summary>
-        /// The input is made positive.
-        /// </summary>
+        [Description("The input is made positive.")]
         ABS = 0x90,
-        /// <summary>
-        /// If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
-        /// </summary>
+        [Description("If the input is 0 or 1, it is flipped. Otherwise the output will be 0.")]
         NOT = 0x91,
-        /// <summary>
-        /// Returns 0 if the input is 0. 1 otherwise.
-        /// </summary>
+        [Description("Returns 0 if the input is 0. 1 otherwise.")]
         NotEqual0 = 0x92,
-        /// <summary>
-        /// Adds two items
-        /// </summary>
+        [Description("Adds two items")]
         ADD = 0x93,
-        /// <summary>
-        /// b is subtracted from a.
-        /// </summary>
+        [Description("b is subtracted from a.")]
         SUB = 0x94,
-        /// <summary>
-        /// [Disabled] a is multiplied by b.
-        /// </summary>
+        [Description("[Disabled] a is multiplied by b.")]
         MUL = 0x95,
-        /// <summary>
-        /// [Disabled] a is divided by b.
-        /// </summary>
+        [Description("[Disabled] a is divided by b.")]
         DIV = 0x96,
-        /// <summary>
-        /// [Disabled] Returns the remainder after dividing a by b. 
-        /// </summary>
+        [Description("[Disabled] Returns the remainder after dividing a by b.")]
         MOD = 0x97,
-        /// <summary>
-        /// [Disabled] Shifts a left b bits, preserving sign.
-        /// </summary>
+        [Description("[Disabled] Shifts a left b bits, preserving sign.")]
         LSHIFT = 0x98,
-        /// <summary>
-        /// [Disabled] Shifts a right b bits, preserving sign.
-        /// </summary>
+        [Description("[Disabled] Shifts a right b bits, preserving sign.")]
         RSHIFT = 0x99,
-        /// <summary>
-        /// If both a and b are not 0, the output is 1. Otherwise 0.
-        /// </summary>
+        [Description("If both a and b are not 0, the output is 1. Otherwise 0.")]
         BoolAnd = 0x9a,
-        /// <summary>
-        /// If a or b is not 0, the output is 1. Otherwise 0.
-        /// </summary>
+        [Description("If a or b is not 0, the output is 1. Otherwise 0.")]
         BoolOr = 0x9b,
-        /// <summary>
-        /// Returns 1 if the numbers are equal, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if the numbers are equal, 0 otherwise.")]
         NumEqual = 0x9c,
-        /// <summary>
-        /// Same as OP_NUMEQUAL, but runs OP_VERIFY afterward.
-        /// </summary>
+        [Description("Same as OP_NUMEQUAL, but runs OP_VERIFY afterward.")]
         NumEqualVerify = 0x9d,
-        /// <summary>
-        /// Returns 1 if the numbers are not equal, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if the numbers are not equal, 0 otherwise.")]
         NumNotEqual = 0x9e,
-        /// <summary>
-        /// Returns 1 if a is less than b, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if a is less than b, 0 otherwise.")]
         LessThan = 0x9f,
-        /// <summary>
-        /// Returns 1 if a is greater than b, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if a is greater than b, 0 otherwise.")]
         GreaterThan = 0xa0,
-        /// <summary>
-        /// Returns 1 if a is less than or equal to b, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if a is less than or equal to b, 0 otherwise.")]
         LessThanOrEqual = 0xa1,
-        /// <summary>
-        /// Returns 1 if a is greater than or equal to b, 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if a is greater than or equal to b, 0 otherwise.")]
         GreaterThanOrEqual = 0xa2,
-        /// <summary>
-        /// Returns the smaller of a and b.
-        /// </summary>
+        [Description("Returns the smaller of a and b.")]
         MIN = 0xa3,
-        /// <summary>
-        /// Returns the larger of a and b.
-        /// </summary>
+        [Description("Returns the larger of a and b.")]
         MAX = 0xa4,
-        /// <summary>
-        /// Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
-        /// </summary>
+        [Description("Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.")]
         WITHIN = 0xa5,
 
         #endregion
@@ -443,47 +237,25 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
 
         #region Crypto
-
-        /// <summary>
-        /// The input is hashed using RIPEMD-160.
-        /// </summary>
+        [Description("The input is hashed using RIPEMD-160.")]
         RIPEMD160 = 0xa6,
-        /// <summary>
-        /// The input is hashed using SHA-1.
-        /// </summary>
+        [Description("The input is hashed using SHA-1.")]
         SHA1 = 0xa7,
-        /// <summary>
-        /// The input is hashed using SHA-256.
-        /// </summary>
+        [Description("The input is hashed using SHA-256.")]
         SHA256 = 0xa8,
-        /// <summary>
-        /// The input is hashed first with SHA-256 and then with RIPEMD-160.
-        /// </summary>
+        [Description("The input is hashed first with SHA-256 and then with RIPEMD-160.")]
         HASH160 = 0xa9,
-        /// <summary>
-        /// The input is hashed two times with SHA-256.
-        /// </summary>
+        [Description("The input is hashed two times with SHA-256.")]
         HASH256 = 0xaa,
-        /// <summary>
-        /// All of the signature checking words will only match signatures to the data after the most recently-executed OP_CODESEPARATOR.
-        /// </summary>
+        [Description("All of the signature checking words will only match signatures to the data after the most recently-executed OP_CODESEPARATOR.")]
         CodeSeparator = 0xab,
-        /// <summary>
-        /// The entire transaction's outputs, inputs, and script (from the most recently-executed OP_CODESEPARATOR to the end) are hashed. 
-        /// The signature used by OP_CHECKSIG must be a valid signature for this hash and public key. If it is, 1 is returned, 0 otherwise.
-        /// </summary>
+        [Description("The entire transaction's outputs, inputs, and script (from the most recently-executed OP_CODESEPARATOR to the end) are hashed.\nThe signature used by OP_CHECKSIG must be a valid signature for this hash and public key. If it is, 1 is returned, 0 otherwise.")]
         CheckSig = 0xac,
-        /// <summary>
-        /// Runs <see cref="CheckSig"/> first then <see cref="VERIFY"/>.
-        /// </summary>
+        [Description("Runs OP_CheckSig first then OP_VERIFY.")]
         CheckSigVerify = 0xad,
-        /// <summary>
-        /// Compares the first signature against each public key until it finds an ECDSA match. Starting with the subsequent public key, it compares the second signature against each remaining public key until it finds an ECDSA match. The process is repeated until all signatures have been checked or not enough public keys remain to produce a successful result. All signatures need to match a public key. Because public keys are not checked again if they fail any signature comparison, signatures must be placed in the scriptSig using the same order as their corresponding public keys were placed in the scriptPubKey or redeemScript. If all signatures are valid, 1 is returned, 0 otherwise. Due to a bug, one extra unused value is removed from the stack.
-        /// </summary>
+        [Description("Compares the first signature against each public key until it finds an ECDSA match. Starting with the subsequent public key, it compares the second signature against each remaining public key until it finds an ECDSA match. The process is repeated until all signatures have been checked or not enough public keys remain to produce a successful result. All signatures need to match a public key. Because public keys are not checked again if they fail any signature comparison, signatures must be placed in the scriptSig using the same order as their corresponding public keys were placed in the scriptPubKey or redeemScript. If all signatures are valid, 1 is returned, 0 otherwise. Due to a bug, one extra unused value is removed from the stack.")]
         CheckMultiSig = 0xae,
-        /// <summary>
-        /// Runs <see cref="CheckMultiSig"/> then <see cref="VERIFY"/>.
-        /// </summary>
+        [Description("Runs OP_CheckMultiSig then OP_VERIFY.")]
         CheckMultiSigVerify = 0xaf,
 
         #endregion
@@ -491,54 +263,26 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
         #region ??
 
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+
+        [Description("OP is ignored.")]
         NOP1 = 0xb0,
-        /// <summary>
-        /// Marks transaction as invalid if the top stack item is greater than the transaction's nLockTime field
-        /// </summary>
+        [Description("Marks transaction as invalid if the top stack item is greater than the transaction's nLockTime field")]
         CheckLocktimeVerify = 0xb1,
-        ///// <summary>
-        ///// Same as: <see cref="CheckLocktimeVerify"/>
-        ///// </summary>
-        //NOP2 = CheckLocktimeVerify,
-        /// <summary>
-        /// Marks transaction as invalid if the relative lock time of the input is 
-        /// not equal to or longer than the value of the top stack item.
-        /// </summary>
+        [Description("Marks transaction as invalid if the relative lock time of the input is\nnot equal to or longer than the value of the top stack item.")]
         CheckSequenceVerify = 0xb2,
-        ///// <summary>
-        ///// Same as: <see cref="CheckSequenceVerify"/>.
-        ///// </summary>
-        //NOP3 = CheckSequenceVerify,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP4 = 0xb3,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP5 = 0xb4,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP6 = 0xb5,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP7 = 0xb6,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP8 = 0xb7,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP9 = 0xb8,
-        /// <summary>
-        /// OP is ignored.
-        /// </summary>
+        [Description("OP is ignored.")]
         NOP10 = 0xb9,
 
         // TODO: 0xba to 0xf9 are missing, check if it is unasigned or missed here. unassigned OP codes make tx invalid.

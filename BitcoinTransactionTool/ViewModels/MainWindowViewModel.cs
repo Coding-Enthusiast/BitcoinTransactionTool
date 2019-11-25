@@ -54,11 +54,11 @@ namespace BitcoinTransactionTool.ViewModels
             get
             {
                 Version ver = Assembly.GetExecutingAssembly().GetName().Version;
-                return $"Bitcoin Transaction Tool - Version {((ver.Major == 0) ? "Beta" : ver.Minor.ToString())}";
+                return $"Bitcoin Transaction Tool - Version {((ver.Major == 0) ? "Beta" : ver.ToString(2))}";
             }
         }
 
-        public string VerString => Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+        public string VerString => Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
 
 
         /// <summary>

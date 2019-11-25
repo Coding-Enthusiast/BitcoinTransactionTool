@@ -6,21 +6,34 @@
 using BitcoinTransactionTool.Backend.Blockchain.Scripts;
 using CommonLibrary;
 using System;
+using System.ComponentModel;
 
 namespace BitcoinTransactionTool.Models
 {
     public class ButtonModel
     {
-        public ButtonModel(OP op, bool enabled, Action<object> s)
+        public ButtonModel(OP op, bool enabled, Action<object> methodToRun)
         {
-            OpCode = op;
-            string n = op.ToString();
             Name = $"OP__{op.ToString()}";
-            RunCommand = new BindableCommand(s);
+            OpCode = op;
+
+            DescriptionAttribute[] desc = GetDescriptions(op);
+            Description = (desc == null || desc.Length == 0) ? Name : desc[0].Description;
+
+            RunCommand = new BindableCommand(methodToRun);
             Enabled = enabled;
         }
 
+        private DescriptionAttribute[] GetDescriptions(OP op)
+        {
+            return op.GetType()
+                     .GetField(op.ToString())
+                     .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                     as DescriptionAttribute[];
+        }
+
         public string Name { get; set; }
+        public string Description { get; set; }
         public bool Enabled { get; set; }
         public OP OpCode { get; set; }
         public BindableCommand RunCommand { get; set; }

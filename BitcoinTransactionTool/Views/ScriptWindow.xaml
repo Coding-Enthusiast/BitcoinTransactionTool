@@ -30,7 +30,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Name}" Command="{Binding RunCommand}" CommandParameter="{Binding OpCode}" 
-                            IsEnabled="{Binding Enabled}"
+                            IsEnabled="{Binding Enabled}" ToolTip="{Binding Description}"
                             Width="auto" MinWidth="120" Height="30" Margin="2"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
