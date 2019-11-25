@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 
 namespace BitcoinTransactionTool.ViewModels
@@ -47,6 +48,18 @@ namespace BitcoinTransactionTool.ViewModels
 
 
         #region Properties
+
+        public string TitleVersion
+        {
+            get
+            {
+                Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+                return $"Bitcoin Transaction Tool - Version {((ver.Major == 0) ? "Beta" : ver.Minor.ToString())}";
+            }
+        }
+
+        public string VerString => Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
 
         /// <summary>
         /// Indicating an active connection.
@@ -164,7 +177,7 @@ namespace BitcoinTransactionTool.ViewModels
         /// Amount of fee in satoshi per byte based on estimated transaction size and fee amount.
         /// </summary>
         [DependsOnProperty(nameof(TransactionSize), nameof(Fee))]
-        public string FeePerByte => 
+        public string FeePerByte =>
             string.Format($"{((TransactionSize == 0) ? 0 : ((int)(Fee / BitcoinConversions.Satoshi) / TransactionSize))} satoshi/byte");
 
 
