@@ -6,7 +6,7 @@
 using BitcoinTransactionTool.Backend;
 using BitcoinTransactionTool.Backend.Blockchain;
 using BitcoinTransactionTool.Backend.Encoders;
-using CommonLibrary;
+using BitcoinTransactionTool.Backend.MVVM;
 using Newtonsoft.Json;
 using System;
 

@@ -3,22 +3,53 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
-using CommonLibrary;
+using BitcoinTransactionTool.Backend;
+using BitcoinTransactionTool.Backend.Encoders;
+using BitcoinTransactionTool.Backend.MVVM;
 
 namespace BitcoinTransactionTool.Models
 {
     public class BitcoinAddress : ValidatableBase
     {
-        private string address;
+        private string _addr;
         public string Address
         {
-            get { return address; }
+            get { return _addr; }
             set
             {
-                if (SetField(ref address, value))
+                if (SetField(ref _addr, value))
                 {
-                    Validate(value);
+                    Validate();
                 }
+            }
+        }
+
+
+        public override void Validate()
+        {
+            ClearErrors(nameof(Address));
+
+            if (string.IsNullOrEmpty(Address))
+            {
+                AddError(nameof(Address), "Address can not be empty.");
+            }
+            else if (Address.StartsWith("1") || Address.StartsWith("3"))
+            {
+                if (!new Base58().IsValid(Address))
+                {
+                    AddError(nameof(Address), "Invalid Base58 encoded address.");
+                }
+            }
+            else if (Address.StartsWith("bc1"))
+            {
+                if (!new Bech32().IsValid(Address))
+                {
+                    AddError(nameof(Address), "Invalid Bech32 encoded address.");
+                }
+            }
+            else
+            {
+                AddError(nameof(Address), "Invalid address format.");
             }
         }
     }
@@ -26,11 +57,11 @@ namespace BitcoinTransactionTool.Models
 
     public class SendingAddress : BitcoinAddress
     {
-        private ulong balanceSatoshi;
+        private ulong _satBal;
         public ulong BalanceSatoshi
         {
-            get { return balanceSatoshi; }
-            set { SetField(ref balanceSatoshi, value); }
+            get { return _satBal; }
+            set { SetField(ref _satBal, value); }
         }
 
         /// <summary>
@@ -39,7 +70,7 @@ namespace BitcoinTransactionTool.Models
         [DependsOnProperty(nameof(BalanceSatoshi))]
         public decimal Balance
         {
-            get { return BalanceSatoshi * BitcoinConversions.Satoshi; }
+            get { return BalanceSatoshi * Constants.Satoshi; }
         }
     }
 
@@ -57,7 +88,7 @@ namespace BitcoinTransactionTool.Models
         public ReceivingAddress(string addr, ulong amount)
         {
             Address = addr;
-            Payment = amount * BitcoinConversions.Satoshi;
+            Payment = amount * Constants.Satoshi;
         }
 
         /// <summary>
@@ -66,7 +97,7 @@ namespace BitcoinTransactionTool.Models
         [DependsOnProperty(nameof(Payment))]
         public ulong PaymentSatoshi
         {
-            get { return (ulong)(Payment * (1 / BitcoinConversions.Satoshi)); }
+            get { return (ulong)(Payment * (1 / Constants.Satoshi)); }
         }
 
         /// <summary>
@@ -74,10 +105,10 @@ namespace BitcoinTransactionTool.Models
         /// </summary>
         public decimal Payment
         {
-            get { return payment; }
-            set { SetField(ref payment, value); }
+            get { return _payment; }
+            set { SetField(ref _payment, value); }
         }
-        private decimal payment;
+        private decimal _payment;
 
     }
 }

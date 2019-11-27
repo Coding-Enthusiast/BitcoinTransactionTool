@@ -58,7 +58,7 @@
             <DataGrid ItemsSource="{Binding SendAddressList, Mode=TwoWay}" AutoGenerateColumns="False" 
                       VerticalScrollBarVisibility="Visible" Margin="5">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Address" Width="330" Binding="{Binding Address, Mode=TwoWay}"/>
+                    <DataGridTextColumn Header="Address" Width="330" Binding="{Binding Address, Mode=TwoWay, ValidatesOnDataErrors=True}"/>
                     <DataGridTextColumn Header="Balance" Width="90" Binding="{Binding Balance, Mode=OneWay, StringFormat=\{0:F8\}}"/>
                 </DataGrid.Columns>
             </DataGrid>
@@ -145,7 +145,7 @@
             <DataGrid ItemsSource="{Binding ReceiveList}" AutoGenerateColumns="False" 
                       VerticalScrollBarVisibility="Visible" Margin="5" Grid.Column="0" Grid.Row="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Receiving Address" Width="330" Binding="{Binding Address, Mode=TwoWay}"/>
+                    <DataGridTextColumn Header="Receiving Address" Width="330" Binding="{Binding Address, Mode=TwoWay, ValidatesOnDataErrors=True}"/>
                     <DataGridTextColumn Header="Payment" Width="90" Binding="{Binding Payment, Mode=TwoWay, StringFormat=\{0:F8\}}"/>
                 </DataGrid.Columns>
             </DataGrid>

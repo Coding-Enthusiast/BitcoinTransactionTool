@@ -6,7 +6,7 @@
 using System;
 using System.Windows.Input;
 
-namespace CommonLibrary
+namespace BitcoinTransactionTool.Backend.MVVM
 {
     public class BindableCommand : ICommand
     {
@@ -21,8 +21,8 @@ namespace CommonLibrary
         }
 
 
-        private Action<object> ExecuteMethod;
-        private Func<bool> CanExecuteMethod;
+        private readonly Action<object> ExecuteMethod;
+        private readonly Func<bool> CanExecuteMethod;
 
 
         public void RaiseCanExecuteChanged()
@@ -48,10 +48,7 @@ namespace CommonLibrary
 
         public void Execute(object parameter)
         {
-            if (ExecuteMethod != null)
-            {
-                ExecuteMethod(parameter);
-            }
+            ExecuteMethod?.Invoke(parameter);
         }
     }
 
@@ -70,8 +67,8 @@ namespace CommonLibrary
         }
 
 
-        Action ExecuteMethod;
-        Func<bool> CanExecuteMethod;
+        private readonly Action ExecuteMethod;
+        private readonly Func<bool> CanExecuteMethod;
 
 
         public void RaiseCanExecuteChanged()
@@ -97,10 +94,7 @@ namespace CommonLibrary
 
         public void Execute(object parameter)
         {
-            if (ExecuteMethod != null)
-            {
-                ExecuteMethod();
-            }
+            ExecuteMethod?.Invoke();
         }
     }
 }

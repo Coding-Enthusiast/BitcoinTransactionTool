@@ -140,6 +140,7 @@
     <Compile Include="Backend\Blockchain\Transaction.cs" />
     <Compile Include="Backend\Blockchain\TxIn.cs" />
     <Compile Include="Backend\Blockchain\TxOut.cs" />
+    <Compile Include="Backend\Constants.cs" />
     <Compile Include="Backend\JsonConverterHelper.cs" />
     <Compile Include="Backend\CompactInt.cs" />
     <Compile Include="Backend\Cryptography\Hashing\IHashFunction.cs" />
@@ -154,6 +155,11 @@
     <Compile Include="Backend\ExtentionsAndHelpers.cs" />
     <Compile Include="Backend\IDeserializable.cs" />
     <Compile Include="Backend\LockTime.cs" />
+    <Compile Include="Backend\MVVM\BindableCommand.cs" />
+    <Compile Include="Backend\MVVM\DependsOnPropertyAttribute.cs" />
+    <Compile Include="Backend\MVVM\InpcBase.cs" />
+    <Compile Include="Backend\MVVM\ValidatableBase.cs" />
+    <Compile Include="Backend\MVVM\ViewModelBase.cs" />
     <Compile Include="Backend\StackInt.cs" />
     <Compile Include="Models\BitcoinAddress.cs" />
     <Compile Include="Models\ButtonModel.cs" />

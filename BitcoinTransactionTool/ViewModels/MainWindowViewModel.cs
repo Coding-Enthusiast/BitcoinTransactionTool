@@ -4,9 +4,9 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using BitcoinTransactionTool.Backend;
+using BitcoinTransactionTool.Backend.MVVM;
 using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
-using CommonLibrary;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -177,8 +177,7 @@ namespace BitcoinTransactionTool.ViewModels
         /// Amount of fee in satoshi per byte based on estimated transaction size and fee amount.
         /// </summary>
         [DependsOnProperty(nameof(TransactionSize), nameof(Fee))]
-        public string FeePerByte =>
-            string.Format($"{((TransactionSize == 0) ? 0 : ((int)(Fee / BitcoinConversions.Satoshi) / TransactionSize))} satoshi/byte");
+        public string FeePerByte => $"{((TransactionSize == 0) ? 0 : ((int)(Fee / Constants.Satoshi) / TransactionSize))} satoshi/byte";
 
 
         /// <summary>

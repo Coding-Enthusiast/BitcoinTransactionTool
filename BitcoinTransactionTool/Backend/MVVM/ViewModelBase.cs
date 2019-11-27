@@ -3,9 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
-namespace CommonLibrary
+namespace BitcoinTransactionTool.Backend.MVVM
 {
-    public class ViewModelBase : InpcBase
+    public abstract class ViewModelBase : InpcBase
     {
         /// <summary>
         /// Used for changing the visibility of error message TextBox.

@@ -1,4 +1,9 @@
-﻿using CommonLibrary;
+﻿// Bitcoin Transaction Tool
+// Copyright (c) 2017 Coding Enthusiast
+// Distributed under the MIT software license, see the accompanying
+// file LICENCE or http://www.opensource.org/licenses/mit-license.php.
+
+using BitcoinTransactionTool.Backend.MVVM;
 using System.Windows.Media.Imaging;
 
 namespace BitcoinTransactionTool.ViewModels

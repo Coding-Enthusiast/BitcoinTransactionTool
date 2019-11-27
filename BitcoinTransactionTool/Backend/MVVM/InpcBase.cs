@@ -8,25 +8,28 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace CommonLibrary
+namespace BitcoinTransactionTool.Backend.MVVM
 {
-    public class InpcBase : INotifyPropertyChanged
+    /// <summary>
+    /// Base (abstract) class implementing <see cref="INotifyPropertyChanged"/>. 
+    /// Could be used for both ViewModels and Models
+    /// </summary>
+    public abstract class InpcBase : INotifyPropertyChanged
     {
         public InpcBase()
         {
             PropertyDependencyMap = new Dictionary<string, List<string>>();
 
-            foreach (var property in GetType().GetProperties())
+            foreach (PropertyInfo property in GetType().GetProperties())
             {
-                var attributes = property.GetCustomAttributes<DependsOnPropertyAttribute>();
-                foreach (var dependsAttr in attributes)
+                foreach (DependsOnPropertyAttribute dependsAttr in property.GetCustomAttributes<DependsOnPropertyAttribute>())
                 {
                     if (dependsAttr == null)
                     {
                         continue;
                     }
 
-                    foreach (var dependence in dependsAttr.DependentProps)
+                    foreach (string dependence in dependsAttr.DependentProps)
                     {
                         if (!PropertyDependencyMap.ContainsKey(dependence))
                         {
@@ -40,7 +43,7 @@ namespace CommonLibrary
 
 
         /// <summary>
-        /// Dictonary of properties which have a dependant property.
+        /// Dictonary of all properties which have a dependant property.
         /// </summary>
         protected Dictionary<string, List<string>> PropertyDependencyMap;
 
@@ -65,7 +68,7 @@ namespace CommonLibrary
                 // Raise the PropertyChanged event for dependant properties too.
                 if (PropertyDependencyMap.ContainsKey(propertyName))
                 {
-                    foreach (var p in PropertyDependencyMap[propertyName])
+                    foreach (string p in PropertyDependencyMap[propertyName])
                     {
                         handler(this, new PropertyChangedEventArgs(p));
                     }

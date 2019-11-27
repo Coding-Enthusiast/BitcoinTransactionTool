@@ -4,7 +4,7 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using BitcoinTransactionTool.Backend.Blockchain.Scripts;
-using CommonLibrary;
+using BitcoinTransactionTool.Backend.MVVM;
 using System;
 using System.ComponentModel;
 
