@@ -8,7 +8,6 @@ using BitcoinTransactionTool.Backend.MVVM;
 using BitcoinTransactionTool.Models;
 using BitcoinTransactionTool.Services;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,11 +21,9 @@ namespace BitcoinTransactionTool.ViewModels
     {
         public MainWindowViewModel()
         {
-            // Initializing the lists.
-            ApiList = new ObservableCollection<TxApiNames>(Enum.GetValues(typeof(TxApiNames)).Cast<TxApiNames>().ToList());
-
-            WalletTypeList = new ObservableCollection<WalletType>(Enum.GetValues(typeof(WalletType)).Cast<WalletType>().ToList());
-            TxVersion = 1;
+            // Initializing lists:
+            ApiList = Enum.GetValues(typeof(TxApiNames)).Cast<TxApiNames>();
+            WalletTypeList = Enum.GetValues(typeof(WalletType)).Cast<WalletType>();
             SendAddressList = new BindingList<SendingAddress>();
             UtxoList = new BindingList<UTXO>();
             ReceiveList = new BindingList<ReceivingAddress>();
@@ -42,7 +39,6 @@ namespace BitcoinTransactionTool.ViewModels
             // These moved below to avoid throwing null exception.
             ReceiveList.ListChanged += ReceiveList_ListChanged;
             SelectedUTXOs = new ObservableCollection<UTXO>();
-            SelectionChangedCommand = new BindableCommand(SelectionChanged);
             SelectedWalletType = WalletType.Normal;
         }
 
@@ -79,9 +75,9 @@ namespace BitcoinTransactionTool.ViewModels
         private bool _isReceiving;
 
         /// <summary>
-        /// List of Api services used for receiving Unconfirmed Transaction Outputs (UTXO)
+        /// List of Api services used for receiving Unspent Transaction Outputs (UTXO)
         /// </summary>
-        public ObservableCollection<TxApiNames> ApiList { get; set; }
+        public IEnumerable<TxApiNames> ApiList { get; set; }
 
 
         /// <summary>
@@ -112,7 +108,7 @@ namespace BitcoinTransactionTool.ViewModels
         private BindingList<UTXO> _uTXOList;
 
 
-        private uint _txVer;
+        private uint _txVer = 1;
         public uint TxVersion
         {
             get => _txVer;
@@ -169,14 +165,14 @@ namespace BitcoinTransactionTool.ViewModels
         /// <summary>
         /// Amount of fee which is being paid (Must be >= 0).
         /// </summary>
-        [DependsOnProperty(nameof(TotalSelectedBalance), nameof(TotalToSend))]
+        [DependsOnProperty(nameof(TotalSelectedBalance), nameof(TotalToSend), nameof(SelectedUTXOs))]
         public decimal Fee => TotalSelectedBalance - TotalToSend;
 
 
         /// <summary>
         /// Amount of fee in satoshi per byte based on estimated transaction size and fee amount.
         /// </summary>
-        [DependsOnProperty(nameof(TransactionSize), nameof(Fee))]
+        [DependsOnProperty(nameof(TransactionSize), nameof(Fee), nameof(SelectedUTXOs))]
         public string FeePerByte => $"{((TransactionSize == 0) ? 0 : ((int)(Fee / Constants.Satoshi) / TransactionSize))} satoshi/byte";
 
 
@@ -204,18 +200,20 @@ namespace BitcoinTransactionTool.ViewModels
 
         void ReceiveList_ListChanged(object sender, ListChangedEventArgs e)
         {
-            RaisePropertyChanged("FeePerByte");
-            RaisePropertyChanged("TotalToSend");
-            RaisePropertyChanged("TransactionSize");
+            RaisePropertyChanged(nameof(Fee));
+            RaisePropertyChanged(nameof(FeePerByte));
+            RaisePropertyChanged(nameof(TotalToSend));
+            RaisePropertyChanged(nameof(TransactionSize));
 
             MakeTxCommand.RaiseCanExecuteChanged();
         }
 
 
         /// <summary>
-        /// Since Electrum (possible other wallets) only recognize particular scripts this is required.
+        /// Used for setting wallet type which would indicate which special <see cref="SignatureScript"/>
+        /// is needed for cold storage to sign the raw transaction
         /// </summary>
-        public ObservableCollection<WalletType> WalletTypeList { get; set; }
+        public IEnumerable<WalletType> WalletTypeList { get; set; }
 
         private WalletType _selectedWalletType;
         public WalletType SelectedWalletType
@@ -254,18 +252,6 @@ namespace BitcoinTransactionTool.ViewModels
 
 
         #region commands
-
-        /// <summary>
-        /// Handles getting the ListView.SelectedItems (multiple items)
-        /// </summary>
-        public BindableCommand SelectionChangedCommand { get; private set; }
-        private void SelectionChanged(object param)
-        {
-            // param is of type System.Windows.Controls.SelectedItemCollection
-            IList utxo = (IList)param;
-            SelectedUTXOs = new ObservableCollection<UTXO>(utxo.Cast<UTXO>().ToList());
-        }
-
 
         /// <summary>
         /// Contacts the selected Api service and receives the UTXO list.

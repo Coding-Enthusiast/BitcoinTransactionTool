@@ -202,7 +202,8 @@
                     <Button Content="Copy" Command="{Binding CopyTxCommand, Mode=OneWay}" Width="75" Margin="2"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Column="1">
-                    <ComboBox ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}" Margin="5"/>
+                    <!--Wallet type list is currently not supported-->
+                    <!--<ComboBox ItemsSource="{Binding WalletTypeList}" SelectedItem="{Binding SelectedWalletType}" Margin="5"/>-->
                     <Button Content="Make Tx" Command="{Binding MakeTxCommand, Mode=OneWay}" Height="45" Width="75" Margin="2"/>
                 </StackPanel>
 
