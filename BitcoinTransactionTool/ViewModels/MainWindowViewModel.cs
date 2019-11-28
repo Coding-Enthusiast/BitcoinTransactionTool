@@ -330,8 +330,12 @@ namespace BitcoinTransactionTool.ViewModels
         public RelayCommand ShowQrWindowCommand { get; private set; }
         private void ShowQrWindow()
         {
-            QrViewModel vm = new QrViewModel();
-            vm.QRCode = TransactionQR.Build(RawTx);
+            QrViewModel vm = new QrViewModel()
+            {
+                RawTx = this.RawTx,
+                SelectedInEncoder = QrViewModel.Encoders.Base16,
+                SelectedOutEncoder = QrViewModel.Encoders.Base16
+            };
             winManager = new QrWinManager();
             winManager.Show(vm);
         }

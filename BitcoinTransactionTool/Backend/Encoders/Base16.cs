@@ -69,14 +69,14 @@ namespace BitcoinTransactionTool.Backend.Encoders
         /// <summary>
         /// Converts a given base-16 encoded string to its byte array representation.
         /// </summary>
-        /// <exception cref="ArgumentException"/>
+        /// <exception cref="FormatException"/>
         /// <param name="hex">Hex to convert.</param>
         /// <returns>An array of bytes equivalant of the given base16 encoded string.</returns>
         public static byte[] ToByteArray(string hex)
         {
             if (!IsValid(hex))
             {
-                throw new ArgumentException($"Input is not a valid hex. <{hex}>");
+                throw new FormatException($"Input is not a valid hex. <{hex}>");
             }
 
             if (hex.StartsWith(Prefix))
