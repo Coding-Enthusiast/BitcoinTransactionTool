@@ -17,9 +17,9 @@ using System.Windows;
 
 namespace BitcoinTransactionTool.ViewModels
 {
-    public class ScriptWindowViewModel : ViewModelBase
+    public class ScriptViewModel : ViewModelBase
     {
-        public ScriptWindowViewModel()
+        public ScriptViewModel()
         {
             OpGroups = new ObservableCollection<OpGroupNames>(Enum.GetValues(typeof(OpGroupNames)).Cast<OpGroupNames>());
             SetGroups(OpGroupNames.All);

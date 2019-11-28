@@ -28,6 +28,8 @@ namespace BitcoinTransactionTool.ViewModels
             UtxoList = new BindingList<UTXO>();
             ReceiveList = new BindingList<ReceivingAddress>();
 
+            WinMan = new WindowManager();
+
             // Initializing Commands.
             GetUTXOCommand = new RelayCommand(GetUTXO, () => !IsReceiving);
             MakeTxCommand = new RelayCommand(MakeTx, CanMakeTx);
@@ -242,10 +244,8 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
-        /// <summary>
-        /// An instance of the IWindowManager to show new views.
-        /// </summary>
-        private IWindowManager winManager;
+        
+        public IWindowManager WinMan { get; set; }
         private readonly TxBuilder txBuilder = new TxBuilder();
 
         #endregion
@@ -336,8 +336,8 @@ namespace BitcoinTransactionTool.ViewModels
                 SelectedInEncoder = QrViewModel.Encoders.Base16,
                 SelectedOutEncoder = QrViewModel.Encoders.Base16
             };
-            winManager = new QrWinManager();
-            winManager.Show(vm);
+
+            WinMan.Show(vm, "QR");
         }
 
 
@@ -357,10 +357,12 @@ namespace BitcoinTransactionTool.ViewModels
         public RelayCommand ShowJsonWindowCommand { get; private set; }
         private void ShowJsonWindow()
         {
-            TxJsonViewModel vm = new TxJsonViewModel();
-            vm.RawTx = RawTx;
-            winManager = new TxJsonWinManager();
-            winManager.Show(vm);
+            TxJsonViewModel vm = new TxJsonViewModel
+            {
+                RawTx = RawTx
+            };
+
+            WinMan.Show(vm, "Transaction JSON");
         }
 
 
@@ -370,19 +372,21 @@ namespace BitcoinTransactionTool.ViewModels
         public RelayCommand ShowEditWindowCommand { get; private set; }
         private void ShowEditWindow()
         {
-            TransactionEditViewModel vm = new TransactionEditViewModel();
-            vm.RawTx = RawTx;
-            winManager = new TxEditWinManager();
-            winManager.Show(vm);
+            TransactionEditViewModel vm = new TransactionEditViewModel
+            {
+                RawTx = RawTx
+            };
+
+            WinMan.Show(vm, "Transaction Edit");
         }
 
 
         public RelayCommand ShowScriptWindowCommand => new RelayCommand(ShowScriptWindow);
         private void ShowScriptWindow()
         {
-            ScriptWindowViewModel vm = new ScriptWindowViewModel();
-            winManager = new ScriptWinManager();
-            winManager.Show(vm);
+            ScriptViewModel vm = new ScriptViewModel();
+
+            WinMan.Show(vm, "Script writer");
         }
 
         #endregion

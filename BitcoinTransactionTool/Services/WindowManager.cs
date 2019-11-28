@@ -4,57 +4,33 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using BitcoinTransactionTool.Backend.MVVM;
-using BitcoinTransactionTool.Views;
 using System.Windows;
 
 namespace BitcoinTransactionTool.Services
 {
     public interface IWindowManager
     {
-        void Show(InpcBase ViewModel);
+        void Show(InpcBase ViewModel, string viewTitle);
     }
 
-    public class TxEditWinManager : IWindowManager
+
+    public class WindowManager : IWindowManager
     {
-        public void Show(InpcBase ViewModel)
+        public void Show(InpcBase ViewModel, string viewTitle)
         {
-            TransactionEditWindow myWin = new TransactionEditWindow();
-            myWin.DataContext = ViewModel;
-            myWin.Owner = Application.Current.MainWindow;
-            myWin.ShowDialog();
+            Window win = new Window()
+            {
+                Content = ViewModel,
+                Owner = Application.Current.MainWindow,
+                ResizeMode = ResizeMode.NoResize,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                ShowInTaskbar = false,
+                SizeToContent = SizeToContent.WidthAndHeight,
+                Title = viewTitle
+            };
+
+            win.ShowDialog();
         }
     }
 
-    public class QrWinManager : IWindowManager
-    {
-        public void Show(InpcBase ViewModel)
-        {
-            QrWindow myWin = new QrWindow();
-            myWin.DataContext = ViewModel;
-            myWin.Owner = Application.Current.MainWindow;
-            myWin.ShowDialog();
-        }
-    }
-
-    public class TxJsonWinManager : IWindowManager
-    {
-        public void Show(InpcBase ViewModel)
-        {
-            TxJsonWindow myWin = new TxJsonWindow();
-            myWin.DataContext = ViewModel;
-            myWin.Owner = Application.Current.MainWindow;
-            myWin.ShowDialog();
-        }
-    }
-
-    public class ScriptWinManager : IWindowManager
-    {
-        public void Show(InpcBase ViewModel)
-        {
-            ScriptWindow myWin = new ScriptWindow();
-            myWin.DataContext = ViewModel;
-            myWin.Owner = Application.Current.MainWindow;
-            myWin.ShowDialog();
-        }
-    }
 }

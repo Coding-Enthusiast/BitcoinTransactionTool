@@ -26,7 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.10.0.0</ApplicationVersion>
+    <ApplicationVersion>0.10.1.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -176,26 +176,20 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
-    <Compile Include="ViewModels\ScriptWindowViewModel.cs" />
+    <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="ViewModels\TransactionEditViewModel.cs" />
     <Compile Include="ViewModels\TxJsonViewModel.cs" />
     <Compile Include="Views\QrView.xaml.cs">
       <DependentUpon>QrView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\QrWindow.xaml.cs">
-      <DependentUpon>QrWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ScriptWindow.xaml.cs">
-      <DependentUpon>ScriptWindow.xaml</DependentUpon>
+    <Compile Include="Views\ScriptView.xaml.cs">
+      <DependentUpon>ScriptView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TransactionEditView.xaml.cs">
       <DependentUpon>TransactionEditView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TransactionEditWindow.xaml.cs">
-      <DependentUpon>TransactionEditWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TxJsonWindow.xaml.cs">
-      <DependentUpon>TxJsonWindow.xaml</DependentUpon>
+    <Compile Include="Views\TxJsonView.xaml.cs">
+      <DependentUpon>TxJsonView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -213,11 +207,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\QrWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ScriptWindow.xaml">
+    <Page Include="Views\ScriptView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -225,11 +215,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TransactionEditWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\TxJsonWindow.xaml">
+    <Page Include="Views\TxJsonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

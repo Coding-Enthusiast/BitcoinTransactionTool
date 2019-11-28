@@ -3,16 +3,16 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
-using System.Windows;
+using System.Windows.Controls;
 
 namespace BitcoinTransactionTool.Views
 {
     /// <summary>
-    /// Interaction logic for ScriptWindow.xaml
+    /// Interaction logic for TxJsonView.xaml
     /// </summary>
-    public partial class ScriptWindow : Window
+    public partial class TxJsonView : UserControl
     {
-        public ScriptWindow()
+        public TxJsonView()
         {
             InitializeComponent();
         }

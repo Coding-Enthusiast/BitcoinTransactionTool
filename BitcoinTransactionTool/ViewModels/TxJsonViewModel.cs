@@ -14,13 +14,6 @@ namespace BitcoinTransactionTool.ViewModels
 {
     public class TxJsonViewModel : InpcBase
     {
-        public TxJsonViewModel()
-        {
-
-        }
-
-
-
         /// <summary>
         /// String representing the raw transaction in hex format.
         /// </summary>

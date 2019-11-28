@@ -8,11 +8,11 @@ using System.Windows.Controls;
 namespace BitcoinTransactionTool.Views
 {
     /// <summary>
-    /// Interaction logic for QrView.xaml
+    /// Interaction logic for ScriptView.xaml
     /// </summary>
-    public partial class QrView : UserControl
+    public partial class ScriptView : UserControl
     {
-        public QrView()
+        public ScriptView()
         {
             InitializeComponent();
         }

@@ -7,10 +7,16 @@
              DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <DataTemplate DataType="{x:Type vm:TransactionEditViewModel}">
-            <v:TransactionEditWindow/>
+            <v:TransactionEditView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:QrViewModel}">
-            <v:QrWindow/>
+            <v:QrView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TxJsonViewModel}">
+            <v:TxJsonView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScriptViewModel}">
+            <v:ScriptView/>
         </DataTemplate>
     </Application.Resources>
 </Application>
