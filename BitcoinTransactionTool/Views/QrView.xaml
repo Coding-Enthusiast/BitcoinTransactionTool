@@ -7,33 +7,6 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:QrViewModel, IsDesignTimeCreatable=True}"
              Height="750" Width="750">
-
-    <UserControl.Resources>
-        <Style x:Key="RadioButtonListBoxStyle" TargetType="{x:Type ListBox}">
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle" />
-            <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="{x:Type ListBoxItem}" >
-                        <Setter Property="Margin" Value="2, 2, 2, 0" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <Border Background="Transparent">
-                                        <RadioButton Content="{TemplateBinding ContentPresenter.Content}" 
-                                                     VerticalAlignment="Center" 
-                                                     IsChecked="{Binding Path=IsSelected,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}"/>
-
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="147"/>
@@ -44,13 +17,13 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0">
             <TextBox Text="{Binding RawTx, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Visible" Width="450" Margin="3"/>
-            
+
             <StackPanel Orientation="Vertical" Margin="3">
                 <Label Content="Input Encoding" FontFamily="Comic Sans MS" FontWeight="Bold"/>
                 <ListBox ItemsSource="{Binding EncodingList}" SelectedItem="{Binding SelectedInEncoder}"
                      Style="{StaticResource RadioButtonListBoxStyle}"/>
             </StackPanel>
-            
+
             <StackPanel Orientation="Vertical" Margin="3">
                 <Label Content="Output Encoding" FontFamily="Comic Sans MS" FontWeight="Bold"/>
                 <ListBox ItemsSource="{Binding EncodingList}" SelectedItem="{Binding SelectedOutEncoder}"
