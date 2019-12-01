@@ -119,7 +119,7 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts.Operations
             }
             else if (OpValue == OP.Negative1)
             {
-                opData.Push(new byte[1] { 0b1000_0000 });
+                opData.Push(new byte[1] { 0b1000_0001 });
             }
             else if (OpValue >= OP._1 && OpValue <= OP._16)
             {
