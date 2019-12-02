@@ -239,13 +239,14 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                         IFOp ifop = new IFOp();
                         List<IOperation> ifOps = new List<IOperation>();
                         offset++;
-                        while (data[offset] != (byte)OP.EndIf && data[offset] != (byte)OP.ELSE && offset < endIndex)
+                        // (offset < endIndex) needs to be first to prevent OutOfRange exception
+                        while (offset < endIndex && data[offset] != (byte)OP.EndIf && data[offset] != (byte)OP.ELSE)
                         {
                             if (!TryRead(data, ifOps, ref offset, out error))
                             {
                                 return false;
                             }
-                            if (offset > endIndex)
+                            if (offset >= endIndex)// there must be at least 1 more item remaining that is equal to EndIf
                             {
                                 error = "Bad format.";
                                 return false;
@@ -256,18 +257,19 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                                 return false;
                             }
                         }
-                        if (data[offset] == (byte)OP.ELSE)
+                        // (offset < endIndex) needs to be checked again to prevent another OutOfRange exception
+                        if (offset < endIndex && data[offset] == (byte)OP.ELSE)
                         {
                             List<IOperation> elseOps = new List<IOperation>();
                             offset++;
-                            while (data[offset] != (byte)OP.EndIf && offset < endIndex)
+                            while (offset < endIndex && data[offset] != (byte)OP.EndIf)
                             {
                                 if (!TryRead(data, elseOps, ref offset, out error))
                                 {
                                     return false;
                                 }
                             }
-                            if (offset > endIndex)
+                            if (offset >= endIndex)
                             {
                                 error = "Bad format.";
                                 return false;
@@ -279,8 +281,8 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                             }
                             ifop.elseOps = elseOps.ToArray();
                         }
-
-                        if (data[offset] != (byte)OP.EndIf)
+                        // (offset < endIndex) needs to be checked again to prevent another OutOfRange exception
+                        if (offset >= endIndex || data[offset] != (byte)OP.EndIf)
                         {
                             error = "No OP_ENDIF was found.";//this may never happen!
                             return false;
@@ -295,35 +297,37 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                         NotIfOp notifOp = new NotIfOp();
                         List<IOperation> ifOps2 = new List<IOperation>();
                         offset++;
-                        while (data[offset] != (byte)OP.EndIf && data[offset] != (byte)OP.ELSE && offset < endIndex)
+                        // (offset < endIndex) needs to be first to prevent OutOfRange exception
+                        while (offset < endIndex && data[offset] != (byte)OP.EndIf && data[offset] != (byte)OP.ELSE)
                         {
                             if (!TryRead(data, ifOps2, ref offset, out error))
                             {
                                 return false;
                             }
-                            if (offset > endIndex)
+                            if (offset >= endIndex)// there must be at least 1 more item remaining that is equal to EndIf
                             {
                                 error = "Bad format.";
                                 return false;
                             }
                             if (ifOps2.Count == 0)
                             {
-                                error = "Empty OP_IF";
+                                error = "Empty OP_NotIf";
                                 return false;
                             }
                         }
+                        // (offset < endIndex) needs to be first to prevent OutOfRange exception
                         if (data[offset] == (byte)OP.ELSE)
                         {
                             List<IOperation> elseOps2 = new List<IOperation>();
                             offset++;
-                            while (data[offset] != (byte)OP.EndIf && offset < endIndex)
+                            while (offset < endIndex && data[offset] != (byte)OP.EndIf)
                             {
                                 if (!TryRead(data, elseOps2, ref offset, out error))
                                 {
                                     return false;
                                 }
                             }
-                            if (offset > endIndex)
+                            if (offset >= endIndex)
                             {
                                 error = "Bad format.";
                                 return false;
@@ -335,8 +339,8 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                             }
                             notifOp.elseOps = elseOps2.ToArray();
                         }
-
-                        if (data[offset] != (byte)OP.EndIf)
+                        // (offset < endIndex) needs to be checked again to prevent another OutOfRange exception
+                        if (offset >= endIndex || data[offset] != (byte)OP.EndIf)
                         {
                             error = "No OP_ENDIF was found.";//this may never happen!
                             return false;
@@ -346,6 +350,7 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
 
                         opList.Add(notifOp);
                         break;
+
                     case OP.ELSE:
                         error = "OP_ELSE found without prior OP_IF or OP_NOTIF.";
                         return false;
