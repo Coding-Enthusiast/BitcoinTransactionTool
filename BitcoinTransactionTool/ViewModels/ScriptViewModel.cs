@@ -9,9 +9,11 @@ using BitcoinTransactionTool.Backend.Blockchain.Scripts.Operations;
 using BitcoinTransactionTool.Backend.Encoders;
 using BitcoinTransactionTool.Backend.MVVM;
 using BitcoinTransactionTool.Models;
+using BitcoinTransactionTool.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 
@@ -24,22 +26,64 @@ namespace BitcoinTransactionTool.ViewModels
             OpGroups = new ObservableCollection<OpGroupNames>(Enum.GetValues(typeof(OpGroupNames)).Cast<OpGroupNames>());
             SetGroups(OpGroupNames.All);
 
-            PushCommand = new RelayCommand(Push, () => !string.IsNullOrWhiteSpace(DataToPush));
-            CopyCommand = new RelayCommand(() => Clipboard.SetText(Result), () => !string.IsNullOrEmpty(Result));
-            CopyHexCommand = new RelayCommand(() => Clipboard.SetText(ResultHex), () => !string.IsNullOrEmpty(ResultHex));
-            ClearCommand = new RelayCommand(
-                            () => { Result = string.Empty; ResultHex = string.Empty; RunResult = string.Empty; StackItems.Clear(); },
-                            () => !string.IsNullOrEmpty(Result) || !string.IsNullOrEmpty(ResultHex));
+            ScriptTemplateList = new ScriptVMBase[]
+            {
+                new ScrAddressViewModel(),
+                new ScrArbitraryDataViewModel(),
+                new ScrMultiSigViewModel()
+            };
+            SelectedCustomScript = ScriptTemplateList.First();
 
-            RunCommand = new RelayCommand(Run, () => false /*!string.IsNullOrEmpty(Result) || !string.IsNullOrEmpty(ResultHex)*/);
+            OperationList = new ObservableCollection<IOperation>();
+            OperationList.CollectionChanged += OperationList_CollectionChanged;
+
+            SetOperationsCommand = new RelayCommand(SetOperations);
+            PushDataCommand = new RelayCommand(Push, () => !string.IsNullOrWhiteSpace(DataToPush));
+            CopyCommand = new RelayCommand(() => Clipboard.SetText(ScriptString), () => !string.IsNullOrEmpty(ScriptString));
+            CopyHexCommand = new RelayCommand(() => Clipboard.SetText(ScriptHex), () => !string.IsNullOrEmpty(ScriptHex));
+            ClearCommand = new RelayCommand(Clear, () => !string.IsNullOrEmpty(ScriptString) || !string.IsNullOrEmpty(ScriptHex));
+
+            RunCommand = new RelayCommand(Run, () => OperationList.Count != 0);
         }
 
 
 
-        public ObservableCollection<ButtonModel> AvailableOps { get; set; }
-        public ObservableCollection<OpGroupNames> OpGroups { get; set; }
-        public ObservableCollection<string> StackItems { get; set; } = new ObservableCollection<string>();
+        public OperationConverter OpConverter { get; set; } = new OperationConverter();
+        public ScriptToStringConverter ScriptConverter { get; set; } = new ScriptToStringConverter();
+        public ScriptReader ScrReader { get; set; } = new ScriptReader();
 
+        public ObservableCollection<IOperation> OperationList { get; private set; }
+        private void OperationList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                IEnumerable<IOperation> newItems = e.NewItems.Cast<IOperation>();
+
+                ScriptString += ScriptConverter.GetString(newItems);
+                ScriptHex += ScriptConverter.GetHex(newItems);
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                ScriptString = string.Empty;
+                ScriptHex = string.Empty;
+            }
+
+            // Raise for all actions: add, remove, change,...
+            RunCommand.RaiseCanExecuteChanged();
+        }
+
+        public IEnumerable<ScriptVMBase> ScriptTemplateList { get; set; }
+        public ObservableCollection<ButtonModel> AvailableOps { get; set; }
+
+        private ObservableCollection<string> _stackItems = new ObservableCollection<string>();
+        public ObservableCollection<string> StackItems
+        {
+            get => _stackItems;
+            set => SetField(ref _stackItems, value);
+        }
+
+
+        public ObservableCollection<OpGroupNames> OpGroups { get; set; }
 
         public enum OpGroupNames
         {
@@ -103,14 +147,15 @@ namespace BitcoinTransactionTool.ViewModels
 
         private void Add(object param)
         {
-            Result += $"OP_{((OP)param).ToString().Replace("_", string.Empty)} ";
-            ResultHex += $"{(byte)(OP)param:x2}";
+            OperationList.Add(OpConverter.ConvertToOperation((OP)param));
         }
 
         private bool IsEnabled(OP op)
         {
             return
-                !(op == OP.CAT ||
+                !(op == OP.VerIf ||
+                op == OP.VerNotIf ||
+                op == OP.CAT ||
                 op == OP.SubStr ||
                 op == OP.LEFT ||
                 op == OP.RIGHT ||
@@ -136,7 +181,7 @@ namespace BitcoinTransactionTool.ViewModels
         private OpGroupNames _sel;
         public OpGroupNames SelectedOpGroup
         {
-            get { return _sel; }
+            get => _sel;
             set
             {
                 if (SetField(ref _sel, value))
@@ -147,8 +192,16 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
+        private ScriptVMBase _vm;
+        public ScriptVMBase SelectedCustomScript
+        {
+            get => _vm;
+            set => SetField(ref _vm, value);
+        }
+
+
         private string _res;
-        public string Result
+        public string ScriptString
         {
             get => _res;
             set
@@ -157,15 +210,13 @@ namespace BitcoinTransactionTool.ViewModels
                 {
                     ClearCommand.RaiseCanExecuteChanged();
                     CopyCommand.RaiseCanExecuteChanged();
-                    CopyHexCommand.RaiseCanExecuteChanged();
-                    RunCommand.RaiseCanExecuteChanged();
                 }
             }
         }
 
 
         private string _hex;
-        public string ResultHex
+        public string ScriptHex
         {
             get => _hex;
             set
@@ -173,11 +224,7 @@ namespace BitcoinTransactionTool.ViewModels
                 if (SetField(ref _hex, value))
                 {
                     ClearCommand.RaiseCanExecuteChanged();
-                    CopyCommand.RaiseCanExecuteChanged();
                     CopyHexCommand.RaiseCanExecuteChanged();
-                    RunCommand.RaiseCanExecuteChanged();
-
-                    Run();
                 }
             }
         }
@@ -186,12 +233,12 @@ namespace BitcoinTransactionTool.ViewModels
         private string _data;
         public string DataToPush
         {
-            get { return _data; }
+            get => _data;
             set
             {
                 if (SetField(ref _data, value))
                 {
-                    PushCommand.RaiseCanExecuteChanged();
+                    PushDataCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -205,43 +252,59 @@ namespace BitcoinTransactionTool.ViewModels
         }
 
 
-        public RelayCommand PushCommand { get; private set; }
+        public RelayCommand SetOperationsCommand { get; private set; }
+        private void SetOperations()
+        {
+            if (SelectedCustomScript.SetOperations() && SelectedCustomScript.OpsToAdd.Count() != 0)
+            {
+                SelectedCustomScript.OpsToAdd.ToList().ForEach(x => OperationList.Add(x));
+            }
+        }
+
+        public RelayCommand PushDataCommand { get; private set; }
         private void Push()
         {
-            Result += $"<{DataToPush}> ";
-
             PushDataOp op = new PushDataOp(Base16.ToByteArray(DataToPush));
-            ResultHex += op.ToByteArray().ToBase16();
+            OperationList.Add(op);
         }
 
         public RelayCommand ClearCommand { get; private set; }
+        private void Clear()
+        {
+            RunResult = string.Empty;
+            StackItems.Clear();
+            OperationList.Clear();
+        }
+
         public RelayCommand CopyCommand { get; private set; }
+
         public RelayCommand CopyHexCommand { get; private set; }
+
         public RelayCommand RunCommand { get; private set; }
         private void Run()
         {
-            if (ResultHex.Contains($"{(byte)OP.IF:x2}")  && !ResultHex.Contains($"{(byte)OP.EndIf:x2}"))
+            // if the IfOp is set using the buttons, the mainOps list of it will be null so we have to read the script hex
+            IEnumerable<IfElseOp> listOfIfOps = OperationList.Where(x => x is IfElseOp).Cast<IfElseOp>();
+            if (listOfIfOps.Count() != 0 && listOfIfOps.Any(x => x.mainOps is null))
             {
-                RunResult = "Script contains OP_(NOT)IF but no OP_ENDIF, read/run was skipped.";
-                return;
-            }
-
-            ScriptReader scr = new ScriptReader();
-            int i = 0;
-            byte[] data = Base16.ToByteArray(ResultHex);
-            CompactInt size = new CompactInt(data.Length);
-            data = size.ToByteArray().ConcatFast(data);
-
-            if (!scr.TryDeserialize(data, ref i, out string error))
-            {
-                RunResult = $"An error occured while reading the script: {error}";
-                return;
+                var resp = ScrReader.Read(ScriptHex);
+                if (resp.Errors.Any())
+                {
+                    RunResult = $"Error while reading the script from hex: {resp.Errors.GetErrors()}";
+                    return;
+                }
+                else
+                {
+                    // don't assign list to a new instance, it will break the event that we are listening to above
+                    OperationList.Clear();
+                    resp.Result.ToList().ForEach(x => OperationList.Add(x));
+                }
             }
 
             OpData opdt = new OpData();
             bool success = true;
-
-            foreach (var op in scr.OperationList)
+            string error = null;
+            foreach (var op in OperationList)
             {
                 if (!op.Run(opdt, out error))
                 {
@@ -251,21 +314,12 @@ namespace BitcoinTransactionTool.ViewModels
                 StackItems = new ObservableCollection<string>(opdt.Peek(opdt.ItemCount)
                                                                   .Select(x => (x.Length == 0) ? "(Empty array)" : x.ToBase16())
                                                                   .Reverse());
-                RaisePropertyChanged(nameof(StackItems));
             }
 
             RunResult = success ?
-                $"Success{Environment.NewLine}{opdt.ItemCount} item(s) left on the stack." :
+                $"Success!{Environment.NewLine}{opdt.ItemCount} item(s) left on the stack." :
                 $"Script ended with an error: {error}";
         }
 
-        private class ScriptReader : Script
-        {
-            public ScriptReader()
-            {
-                IsWitness = false;
-                OperationList = new IOperation[0];
-            }
-        }
     }
 }

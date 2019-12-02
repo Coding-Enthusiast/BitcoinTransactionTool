@@ -4,25 +4,108 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:BitcoinTransactionTool.ViewModels"
+             xmlns:v="clr-namespace:BitcoinTransactionTool.Views"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:ScriptViewModel, IsDesignTimeCreatable=True}"
-             Height="800" Width="1210" FontSize="14">
-    <Grid>
+             Height="710" FontSize="14">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:ScrAddressViewModel}">
+            <v:ScrAddressView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScrArbitraryDataViewModel}">
+            <v:ScrArbitraryDataView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScrMultiSigViewModel}">
+            <v:ScrMultiSigView/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="3">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="705"/>
-            <ColumnDefinition Width="500"/>
+            <ColumnDefinition Width="530"/>
+            <ColumnDefinition Width="670"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="42"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,7" Grid.Column="0" Grid.Row="0">
-            <Button Content="Push Data" Command="{Binding PushCommand}" Margin="3"/>
-            <TextBox Text="{Binding DataToPush, UpdateSourceTrigger=PropertyChanged}" Margin="3" Width="620"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+            <TextBlock Text="Script templates: " FontFamily="Comic Sans MS" FontWeight="Bold" VerticalAlignment="Center"/>
+            <ComboBox ItemsSource="{Binding ScriptTemplateList}" SelectedItem="{Binding SelectedCustomScript}" 
+                          VerticalContentAlignment="Center" Width="190" Margin="3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding VmName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Content="Get Script" Command="{Binding SetOperationsCommand}" Margin="30,3,10,3" Width="75"/>
+            <Button Content="Clear all" Command="{Binding ClearCommand}" Margin="3" Width="75"/>
         </StackPanel>
 
-        <ItemsControl ItemsSource="{Binding AvailableOps}" Grid.Column="0" Grid.Row="1">
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding SelectedCustomScript.Description}" TextWrapping="Wrap" Margin="3" Grid.Row="0"/>
+            <ContentControl Content="{Binding SelectedCustomScript}" Margin="3" Grid.Row="1"/>
+            <TextBlock Text="{Binding SelectedCustomScript.Errors}" TextWrapping="Wrap" Margin="3" Grid.Row="2"/>
+
+            <Grid Margin="3" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBox Text="{Binding ScriptString}" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
+                         Grid.Column="0" Grid.Row="0"/>
+                <Button Content="C" Command="{Binding CopyCommand}" 
+                        Height="25" Width="25" VerticalAlignment="Top" Grid.Column="1" Grid.Row="0"/>
+
+                <TextBox Text="{Binding ScriptHex}" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible"
+                         Grid.Column="0" Grid.Row="1"/>
+                <Button Content="C" Command="{Binding CopyHexCommand}" 
+                        Height="25" Width="25" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
+
+
+            <Button Content="Run" Command="{Binding RunCommand}" Width="100" Grid.Row="4"/>
+            <TextBlock Text="{Binding RunResult}" Height="50" Margin="5" Grid.Row="5"/>
+            <ListBox ItemsSource="{Binding StackItems}" Margin="5" Grid.Row="6"/>
+        </Grid>
+
+
+
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Push Data" Command="{Binding PushDataCommand}" Margin="3" Grid.Column="0"/>
+            <TextBox Text="{Binding DataToPush, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"
+                     Margin="3" Grid.Column="1"/>
+            <TextBlock Text="OP filters:" FontFamily="Comic Sans MS" FontWeight="Bold" VerticalAlignment="Center" Margin="3" Grid.Column="2"/>
+            <ComboBox ItemsSource="{Binding OpGroups}" SelectedItem="{Binding SelectedOpGroup}" VerticalContentAlignment="Center"
+                      Width="115" Margin="5" Grid.Column="3"/>
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding AvailableOps}" Grid.Column="1" Grid.Row="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Vertical"/>
@@ -32,36 +115,10 @@
                 <DataTemplate>
                     <Button Content="{Binding Name}" Command="{Binding RunCommand}" CommandParameter="{Binding OpCode}" 
                             IsEnabled="{Binding Enabled}" ToolTip="{Binding Description}"
-                            Width="auto" MinWidth="120" Height="30" Margin="2"/>
+                            Width="auto" MinWidth="110" Height="28" Margin="1"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
-        <Grid Grid.Column="1" Grid.RowSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <ComboBox ItemsSource="{Binding OpGroups}" SelectedItem="{Binding SelectedOpGroup}" 
-                          HorizontalAlignment="Left" Width="100" Margin="5"/>
-                <Button Content="Clear" Command="{Binding ClearCommand}" Margin="50,5,5,5" Width="100"/>
-                <Button Content="Copy" Command="{Binding CopyCommand}" Margin="5" Width="100"/>
-                <Button Content="Copy hex" Command="{Binding CopyHexCommand}" Margin="5" Width="100"/>
-            </StackPanel>
-
-            <TextBox Text="{Binding Result}" TextWrapping="Wrap" IsReadOnly="True" Margin="5" Grid.Row="1"/>
-            <TextBox Text="{Binding ResultHex}" TextWrapping="Wrap" IsReadOnly="True" Margin="5" Grid.Row="2"/>
-
-            <Button Content="Run" Command="{Binding RunCommand}" Width="100" Grid.Row="3"/>
-            <TextBox Text="{Binding RunResult}" Height="50" Margin="5" Grid.Row="4"/>
-            <ListBox ItemsSource="{Binding StackItems}" Margin="5" Grid.Row="5"/>
-        </Grid>
 
     </Grid>
 </UserControl>

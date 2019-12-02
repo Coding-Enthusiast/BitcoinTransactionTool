@@ -163,27 +163,42 @@
     <Compile Include="Backend\StackInt.cs" />
     <Compile Include="Models\BitcoinAddress.cs" />
     <Compile Include="Models\ButtonModel.cs" />
+    <Compile Include="Models\PublicKeyModel.cs" />
     <Compile Include="Models\UTXO.cs" />
     <Compile Include="Services\Api.cs" />
     <Compile Include="Services\ErrorCollection.cs" />
-    <Compile Include="Services\OPCodes.cs" />
+    <Compile Include="Services\OperationConverter.cs" />
     <Compile Include="Services\PushServices.cs" />
     <Compile Include="Services\Response.cs" />
-    <Compile Include="Services\TransactionQR.cs" />
+    <Compile Include="Services\ScriptReader.cs" />
+    <Compile Include="Services\ScriptToStringConverter.cs" />
     <Compile Include="Services\TransactionServices\BlockchainInfo.cs" />
     <Compile Include="Services\TransactionServices\BlockCypher.cs" />
     <Compile Include="Services\TxBuilder.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Services\WindowManager.cs" />
     <Compile Include="ViewModels\QrViewModel.cs" />
+    <Compile Include="ViewModels\ScrAddressViewModel.cs" />
+    <Compile Include="ViewModels\ScrArbitraryDataViewModel.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
+    <Compile Include="ViewModels\ScriptVMBase.cs" />
+    <Compile Include="ViewModels\ScrMultiSigViewModel.cs" />
     <Compile Include="ViewModels\TransactionEditViewModel.cs" />
     <Compile Include="ViewModels\TxJsonViewModel.cs" />
     <Compile Include="Views\QrView.xaml.cs">
       <DependentUpon>QrView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ScrAddressView.xaml.cs">
+      <DependentUpon>ScrAddressView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScrArbitraryDataView.xaml.cs">
+      <DependentUpon>ScrArbitraryDataView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ScriptView.xaml.cs">
       <DependentUpon>ScriptView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScrMultiSigView.xaml.cs">
+      <DependentUpon>ScrMultiSigView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TransactionEditView.xaml.cs">
       <DependentUpon>TransactionEditView.xaml</DependentUpon>
@@ -207,7 +222,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ScrAddressView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScrArbitraryDataView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ScriptView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScrMultiSigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
