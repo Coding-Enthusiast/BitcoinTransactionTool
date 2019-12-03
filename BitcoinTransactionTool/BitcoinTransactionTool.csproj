@@ -180,6 +180,7 @@
     <Compile Include="ViewModels\QrViewModel.cs" />
     <Compile Include="ViewModels\ScrAddressViewModel.cs" />
     <Compile Include="ViewModels\ScrArbitraryDataViewModel.cs" />
+    <Compile Include="ViewModels\ScrHashCollisionViewModel.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="ViewModels\ScriptVMBase.cs" />
     <Compile Include="ViewModels\ScrMultiSigViewModel.cs" />
@@ -193,6 +194,9 @@
     </Compile>
     <Compile Include="Views\ScrArbitraryDataView.xaml.cs">
       <DependentUpon>ScrArbitraryDataView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScrHashCollisionView.xaml.cs">
+      <DependentUpon>ScrHashCollisionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ScriptView.xaml.cs">
       <DependentUpon>ScriptView.xaml</DependentUpon>
@@ -227,6 +231,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ScrArbitraryDataView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScrHashCollisionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

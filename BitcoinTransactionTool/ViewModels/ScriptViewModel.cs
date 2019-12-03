@@ -30,7 +30,8 @@ namespace BitcoinTransactionTool.ViewModels
             {
                 new ScrAddressViewModel(),
                 new ScrArbitraryDataViewModel(),
-                new ScrMultiSigViewModel()
+                new ScrMultiSigViewModel(),
+                new ScrHashCollisionViewModel()
             };
             SelectedCustomScript = ScriptTemplateList.First();
 
@@ -311,9 +312,13 @@ namespace BitcoinTransactionTool.ViewModels
                     success = false;
                     break;
                 }
-                StackItems = new ObservableCollection<string>(opdt.Peek(opdt.ItemCount)
-                                                                  .Select(x => (x.Length == 0) ? "(Empty array)" : x.ToBase16())
-                                                                  .Reverse());
+                StackItems = new ObservableCollection<string>(
+                    opdt.Peek(opdt.ItemCount)
+                        .Select(x =>
+                                    (x.Length == 0) ? "(Empty array = False)" :
+                                    (x.Length == 1 && x[0] == 1) ? "01 (True)" :
+                                    x.ToBase16())
+                        .Reverse());
             }
 
             RunResult = success ?

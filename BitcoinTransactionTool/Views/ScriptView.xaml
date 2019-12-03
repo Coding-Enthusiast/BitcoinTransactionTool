@@ -18,6 +18,9 @@
         <DataTemplate DataType="{x:Type vm:ScrMultiSigViewModel}">
             <v:ScrMultiSigView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScrHashCollisionViewModel}">
+            <v:ScrHashCollisionView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid Margin="3">
