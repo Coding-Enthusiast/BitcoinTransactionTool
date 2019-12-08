@@ -115,13 +115,13 @@
     <Compile Include="Backend\Blockchain\Scripts\OP.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\ArithmeticOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\BaseOperation.cs" />
-    <Compile Include="Backend\Blockchain\Scripts\Operations\CheckLocktimeVerifyOp.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\CheckSigOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\CryptoOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\EqualityOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\FlowControlOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\IOpData.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\IOperation.cs" />
+    <Compile Include="Backend\Blockchain\Scripts\Operations\LockTimeOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\NotRunableOps.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\OpData.cs" />
     <Compile Include="Backend\Blockchain\Scripts\Operations\OpHelper.cs" />

@@ -173,8 +173,6 @@ namespace BitcoinTransactionTool.ViewModels
                 op == OP.RSHIFT
 
                 || op == OP.CodeSeparator // not implemented
-                || op == OP.CheckLocktimeVerify
-                || op == OP.CheckSequenceVerify
                 );
         }
 

@@ -559,8 +559,9 @@ namespace BitcoinTransactionTool.Backend.Blockchain.Scripts
                     case OP.CheckLocktimeVerify:
                         opList.Add(new CheckLocktimeVerifyOp());
                         break;
-                    //case OP.CheckSequenceVerify:
-                    //    break;
+                    case OP.CheckSequenceVerify:
+                        opList.Add(new CheckSequenceVerifyOp());
+                        break;
                     case OP.NOP4:
                         opList.Add(new NOP4Op());
                         break;
