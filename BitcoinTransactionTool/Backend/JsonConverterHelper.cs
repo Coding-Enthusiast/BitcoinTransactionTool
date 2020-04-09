@@ -132,7 +132,7 @@ namespace BitcoinTransactionTool.Backend
                     if (((IfElseOp)op).elseOps != null)
                     {
                         string branch = ScriptToString(((IfElseOp)op).elseOps);
-                        sb.Append($"OP_{op.OpValue.ToString()} {branch} ");
+                        sb.Append($"OP_{OP.ELSE} {branch} ");
                     }
                     sb.Append($"OP_{OP.EndIf.ToString()} ");
                 }
